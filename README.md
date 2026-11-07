@@ -143,6 +143,8 @@ The template fixes the format. The content is still on you.
 
 ## Want the Word and Google Docs version?
 
+<a href="https://www.patreon.com/techworld_with_milan/shop/premium-resume-package-1721454?source=storefront"><img src="images/premium-resume-package.png" width="420" alt="Premium Resume Package: updated resume, resume with summary, prompts to improve a resume, bonus LinkedIn and cover letter materials"></a>
+
 This repo is the free LaTeX and Typst template. The **[Premium Resume Package](https://www.patreon.com/techworld_with_milan/shop/premium-resume-package-1721454?source=storefront)** has the editable Word templates (they also open in Google Docs), versions with a summary and with projects, a matching cover letter, the AI prompts I use to tailor a resume to a job post, a video walkthrough, and short guides on writing the resume and preparing your LinkedIn profile.
 
 ## Credits and license
