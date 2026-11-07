@@ -1,0 +1,81 @@
+% Milanovic Resume: one page, one column, ATS-friendly.
+% Compile: latexmk resume.tex   (XeLaTeX, set in latexmkrc)
+% Options: \documentclass[paper=letter, accent=1F4E79, fontsize=10]{milanovic-resume}
+\documentclass{milanovic-resume}
+
+\name{Dr. Milan Milanović}
+\contact{%
+  Belgrade, Serbia \sep
+  \href{mailto:milan@example.com}{milan@example.com} \sep
+  +381 60 123 456 \sep
+  \href{https://www.linkedin.com/in/milanmilanovic}{linkedin.com/in/milanmilanovic}%
+}
+\headline{CTO / Principal Software Architect}
+\tagline{Builds cloud products and teams that scale to millions and cuts time-to-market by 50\%}
+\keywords{CTO, Software Architect, .NET, Azure, Engineering Leadership}
+
+\begin{document}
+\makeheader
+
+\summary{Engineering leader with 20+ years of hands-on experience turning complex business ideas into
+reliable, scalable software. Grew a SaaS line to €1M ARR, cut Azure spend 30\% (€120K/yr), and coached
+a 40-person team to deploy to production every 45 minutes at 99.9\% uptime.}
+
+\section{Skills}
+\begin{skills}
+  \item Technical strategy \& roadmapping
+  \item Microservices \& modular monoliths
+  \item Team scaling \& people management
+  \item .NET \& C\# architecture
+  \item Domain-Driven Design (DDD)
+  \item Recruiting, mentoring \& coaching
+  \item Azure \& cloud-native design
+  \item DevOps \& CI/CD (Azure DevOps, Git)
+  \item Agile \& Scrum leadership
+  \item Security \& compliance
+\end{skills}
+
+\section{Professional Experience}
+
+\job{3MD Inc}{Chief Technology Officer}{Belgrade, Serbia}{2022 -- Present}
+\begin{itemize}
+  \item Co-founded and defined the architecture of a SaaS trucking platform processing 500 req/s at 200 ms p95 latency.
+  \item Hired and mentored a team of 10+ senior .NET engineers; set up the engineering ladder and OKR process.
+  \item Cut the Azure bill 30\% by collapsing 14 microservices into a modular monolith (AKS to App Service).
+  \item Introduced automated CI/CD; deployments shrank from 2 days to 45 minutes.
+  \item Introduced real-time cost dashboards and rightsizing routines; trimmed compute spend by €120K/yr
+        and met ISO 27001 controls ahead of the audit.
+\end{itemize}
+
+\job{Zühlke Group}{Principal Consultant}{Belgrade, Serbia}{2017 -- 2022}
+\begin{itemize}
+  \item Closed a US\$2M consulting engagement by designing an integrated investment advisory solution;
+        delivered 107\% YoY client growth.
+  \item Architected a speech recognition platform on Azure Cognitive Services with transcript latency
+        under 300 ms at a 99.9\% SLO.
+  \item Led the cloud capability for the SEE region; ran 12 masterclasses and certified 25 architects on Azure.
+  \item Scaled the cloud practice from 6 to 28 engineers; 95\% retention, three future principals promoted.
+  \item Promoted twice in 3 years for impact on revenue and engineering excellence.
+\end{itemize}
+
+\job{EPS}{Head of Engineering}{Belgrade, Serbia}{2004 -- 2017}
+\begin{itemize}
+  \item Managed a 40-person department delivering internal line-of-business apps used by 10K employees.
+  \item Standardized the SDLC and CI, raising on-time delivery from 60\% to 92\% within 12 months.
+  \item Cut Severity 1 production outages by 40\% in 12 months.
+\end{itemize}
+
+\section{Education}
+\begin{itemize}
+  \education{Ph.D. in Computer Science}{University of Belgrade}{2010}
+  \education{M.Sc. in Software Engineering}{University of Belgrade}{2007}
+  \education{B.Sc. (Hons.) in Computer Engineering Management}{School of Business}{2004 (GPA 4.0/4.0)}
+\end{itemize}
+
+\section{Certifications}
+\inline{Microsoft MVP \sep Azure Developer \sep Certified ScrumMaster (CSM) \sep Professional Scrum Developer (PSD)}
+
+\section{Languages}
+\inline{Serbian (native) \sep English (C1)}
+
+\end{document}

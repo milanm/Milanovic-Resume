@@ -1,0 +1,21 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.xdv
+*.toc
+latex/*.pdf
+
+# Typst output next to sources (release PDFs live in pdf/)
+typst/*.pdf
+
+# Build output
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp

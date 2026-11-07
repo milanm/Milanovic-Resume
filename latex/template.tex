@@ -1,0 +1,77 @@
+% Starter template: replace the placeholder text, delete what you don't need.
+% Keep it on one page. The class warns you in the log when it spills onto page 2.
+%
+% Options: paper=a4|letter, accent=<hex>, fontsize=<pt>, ligatures=true|false, onepage=true|false
+\documentclass[paper=a4]{milanovic-resume}
+
+\name{Your Name}
+\contact{%
+  City, Country \sep
+  \href{mailto:you@example.com}{you@example.com} \sep
+  +1 555 010 0000 \sep
+  \href{https://www.linkedin.com/in/your-handle}{linkedin.com/in/your-handle} \sep
+  \href{https://github.com/your-handle}{github.com/your-handle}%
+}
+\headline{Target Role, e.g. Senior Backend Engineer}
+\tagline{One line with your strongest result, e.g. Ships payment APIs that handle 2M transactions a day}
+\keywords{Role, Main language, Main platform}
+
+\begin{document}
+\makeheader
+
+% Optional. One to three sentences: role, scope, two numbers. Delete for junior roles.
+\summary{Backend engineer with 6 years building high-traffic APIs in Go and PostgreSQL. Cut p95 latency
+from 900 ms to 180 ms and led the migration of 40 services to Kubernetes with zero downtime.}
+
+\section{Skills}
+% Ten items, the ones the job description asks for first.
+\begin{skills}
+  \item Language 1, Language 2
+  \item Framework or runtime
+  \item Database / storage
+  \item Cloud platform
+  \item CI/CD and tooling
+  \item Architecture style
+  \item Testing approach
+  \item Observability stack
+  \item Security / compliance
+  \item Soft skill backed by evidence
+\end{skills}
+
+\section{Professional Experience}
+
+% \job{Company}{Title}{Location}{Dates}
+\job{Company}{Title}{City, Country}{2023 -- Present}
+\begin{itemize}
+  % Verb first, result last, a number in between.
+  \item Built X that did Y, measured by Z.
+  \item Reduced A by N\% by changing B.
+  \item Led a team of N to deliver C in M weeks.
+\end{itemize}
+
+\job{Company}{Title}{City, Country}{2020 -- 2023}
+\begin{itemize}
+  \item Result with a number.
+  \item Result with a number.
+\end{itemize}
+
+% Projects work well for juniors, career switchers and open-source maintainers.
+\section{Selected Projects}
+% \project{Name}{Context or link}{Tech stack}
+\project{Project name}{\href{https://github.com/your-handle/project}{github.com/your-handle/project}}{Go, PostgreSQL, Docker}
+\begin{itemize}
+  \item What it does and who uses it, with a number: stars, users, requests per second.
+\end{itemize}
+
+\section{Education}
+\begin{itemize}
+  \education{Degree}{University}{Year}
+\end{itemize}
+
+\section{Certifications}
+\inline{Certification \sep Certification}
+
+\section{Languages}
+\inline{Language (native) \sep Language (C1)}
+
+\end{document}
