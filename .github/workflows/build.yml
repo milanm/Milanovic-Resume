@@ -58,7 +58,7 @@ jobs:
       - name: Overleaf zip and previews
         run: make overleaf previews
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: milanovic-resume
           path: |
