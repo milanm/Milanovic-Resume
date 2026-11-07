@@ -3,7 +3,10 @@
 %% Author: Dr. Milan Milanovic (https://github.com/milanm/Milanovic-Resume)
 %% License: MIT (class and examples), SIL OFL 1.1 (bundled Source Sans 3 fonts)
 %%
-%% Compile with XeLaTeX (latexmkrc in this folder sets it up; Overleaf: Menu > Compiler > XeLaTeX).
+%% Compile with LuaLaTeX (latexmkrc in this folder sets it up; Overleaf: Menu > Compiler > LuaLaTeX).
+%% LuaLaTeX writes real hyphens and spaces into the PDF text layer and, with the
+%% \DocumentMetadata line at the top of each example, a tagged PDF/UA-2 file.
+%% XeLaTeX also works: delete the \DocumentMetadata line first (XeTeX can't tag).
 %%
 %% Class options (all optional, key=value):
 %%   paper     = a4 | letter            (default: a4)

@@ -1,0 +1,14 @@
+name: Feature request
+description: An option or building block you'd like the template to have
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What do you want to put on your resume that the template can't do today?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How you imagine it (LaTeX and/or Typst)

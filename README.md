@@ -12,10 +12,11 @@ I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose o
 
 <p align="center">
   <img src="images/template.png" width="32%" alt="Starter template">
+  <img src="images/junior.png" width="32%" alt="Junior engineer example">
   <img src="images/cover-letter.png" width="32%" alt="Cover letter">
 </p>
 
-**[Create your resume in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=template.tex)** · [Open the filled example in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=resume.tex) · [Example PDF (LaTeX)](pdf/resume-latex.pdf) · [Example PDF (Typst)](pdf/resume-typst.pdf)
+**[Create your resume in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=lualatex&main_document=template.tex)** · [Open the filled example in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=lualatex&main_document=resume.tex) · [Example PDF (LaTeX)](pdf/resume-latex.pdf) · [Example PDF (Typst)](pdf/resume-typst.pdf)
 
 ## What you get
 
@@ -24,7 +25,8 @@ I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose o
 | `latex/resume.tex` | My own resume, as a filled-in example |
 | `latex/template.tex` | Starter with placeholders and a projects section |
 | `latex/cover-letter.tex` | Cover letter in the same style |
-| `typst/*.typ` | The same three documents in Typst |
+| `latex/junior.tex` | A junior engineer's resume (made-up person): no summary, projects up front |
+| `typst/*.typ` | The same four documents in Typst |
 | `scripts/check_pdf.py` | The ATS check that runs in CI |
 
 ## How it differs from most resume templates
@@ -33,34 +35,37 @@ I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose o
 |---|---|---|
 | Layout | One column, skills included (one line, separated by dots). CI checks with poppler that your headings and a line from each section come out in page order | Often two columns, read in an unpredictable order |
 | Length | CI fails the build on a second page, for both engines. The LaTeX class also warns in the log while you write (Typst has no such warning) | No limit |
-| Text layer | Tested on every commit: no ligature glyphs, real hyphens, `ć` and `ü` intact. Poppler for both builds, pdfminer.six for the Typst build | Untested |
+| Text layer | Tested on every commit with poppler and pdfminer.six, both engines: no ligature glyphs, real hyphens, `ć` and `ü` intact | Untested |
+| Accessibility | Tagged PDF from both engines (PDF/UA-2 from LaTeX), so screen readers and parsers get the structure | Untagged |
 | Font | Source Sans 3, open license, bundled. Same result on Windows, macOS, Linux and Overleaf | System or Mac-only fonts |
-| Engines | LaTeX (XeLaTeX) and Typst, same design | LaTeX only |
+| Engines | LaTeX (LuaLaTeX) and Typst, same design | LaTeX only |
 | Settings | Paper, accent colour, font size and ligatures are class options | Edit the style file |
 | Cover letter | Included, matching style | Rarely |
 
-The text-layer check paid off while I was building this. XeLaTeX wrote every plain hyphen into the PDF as a non-breaking hyphen (U+2011). The page looked right, but a keyword search for "cloud-native" found nothing. The class now adds ActualText hints, so poppler (`pdftotext`) and pdfium read real hyphens. Parsers that ignore those hints, such as pdfminer.six and pypdf, still see U+2011 in the XeLaTeX build. The Typst build is clean in all four, which is why CI runs the stricter pdfminer.six pass on it. pdfminer.six also reorders centred headings with its layout heuristic, whatever the template, so CI uses it for the text layer and checks reading order with poppler.
+The text-layer check paid off while I was building this. The first version compiled with XeLaTeX, which wrote every plain hyphen into the PDF as a non-breaking hyphen (U+2011) and positioned words without real spaces. The page looked right, but a keyword search for "cloud-native" found nothing, and pypdf read the summary as one long word. LuaLaTeX with a tagged PDF writes real hyphens and real spaces: poppler, pdfminer.six and pypdf now all read the same 428 words. pdfminer.six still reorders centred headings with its layout heuristic, whatever the template, so CI uses it for the text layer and checks reading order with poppler.
 
 ### Which engine should I use?
 
-- **Typst** if you want the cleanest text layer for every parser, and compile times in milliseconds.
-- **LaTeX** if you live in Overleaf or already have a TeX setup. Both produce the same page.
+- **Typst** if you want compile times in milliseconds and a single small library file.
+- **LaTeX** if you live in Overleaf or already have a TeX setup.
+
+Both produce the same page, the same text for parsers, and a tagged PDF.
 
 ## Quick start
 
 ### Overleaf (nothing to install)
 
-1. Click **[Create your resume in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=template.tex)**. It opens `template.tex` with placeholders; my filled example is `resume.tex` in the same project.
-2. Check that **Menu → Compiler** says **XeLaTeX**.
+1. Click **[Create your resume in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=lualatex&main_document=template.tex)**. It opens `template.tex` with placeholders; my filled example is `resume.tex` in the same project.
+2. Check that **Menu → Compiler** says **LuaLaTeX**.
 3. Replace the placeholders and keep an eye on the log: the class warns as soon as you spill onto page 2.
 
 ### LaTeX on your machine
 
-Needs TeX Live or MiKTeX with `latexmk`.
+Needs a current TeX Live or MiKTeX with `latexmk` (CI uses the latest TeX Live). Prefer XeLaTeX? Delete the `\DocumentMetadata` line at the top of the file first, because XeTeX can't make a tagged PDF.
 
 ```bash
 cd latex
-latexmk resume.tex      # latexmkrc already selects XeLaTeX
+latexmk resume.tex      # latexmkrc already selects LuaLaTeX
 ```
 
 ### Typst
@@ -127,7 +132,7 @@ Typst takes the same settings as arguments: `paper: "us-letter"`, `accent: rgb("
 
 ```bash
 python3 scripts/check_pdf.py pdf/resume-latex.pdf --expect "Your Name" SKILLS "PROFESSIONAL EXPERIENCE" EDUCATION --contains "you@example.com" --show
-python3 scripts/check_pdf.py pdf/resume-typst.pdf --parser pdfminer --contains "you@example.com"   # needs: pip install pdfminer.six
+python3 scripts/check_pdf.py pdf/resume-latex.pdf --parser pdfminer --contains "you@example.com"   # needs: pip install pdfminer.six
 ```
 
 ### Run it on your own resume
@@ -162,6 +167,8 @@ This repo is the free LaTeX and Typst template. The **[Premium Resume Package](h
 - The repo layout follows the example of [Deedy Resume](https://github.com/deedy/Deedy-Resume), which showed how useful a well-made open resume template can be.
 
 ## Changelog
+
+**v1.2.0** (2026-11-07): junior engineer example; CONTRIBUTING and issue forms; LaTeX compiles with LuaLaTeX into a tagged PDF/UA-2 file; real hyphens and spaces in the text layer, so poppler, pdfminer.six and pypdf all read it the same; CI runs the pdfminer.six check on both engines; Overleaf links open with LuaLaTeX.
 
 **v1.1.1** (2026-11-07): starter template shows full job titles, company legal forms and "Mon YYYY" dates; `MAX_PAGES` in the Makefile; Dependabot keeps the GitHub Actions current.
 

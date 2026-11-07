@@ -1,0 +1,30 @@
+name: Bug report
+description: Something renders wrong, fails to compile, or a parser reads the PDF badly
+labels: [bug]
+body:
+  - type: dropdown
+    id: engine
+    attributes:
+      label: Engine
+      options: [LaTeX (LuaLaTeX), LaTeX (XeLaTeX), Typst, Overleaf]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: TeX Live / MiKTeX year or Typst version, and the template release (e.g. v1.2.0)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: Output of the ATS check
+      description: "python3 scripts/check_pdf.py your.pdf --show (remove personal details)"
+      render: text

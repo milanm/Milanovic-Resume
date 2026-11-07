@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Compile LaTeX (XeLaTeX)
+      - name: Compile LaTeX (LuaLaTeX, tagged PDF)
         uses: xu-cheng/latex-action@v4
         with:
           working_directory: latex
@@ -27,7 +27,8 @@ jobs:
             resume.tex
             template.tex
             cover-letter.tex
-          latexmk_use_xelatex: true
+            junior.tex
+          latexmk_use_lualatex: true
 
       - uses: actions/setup-python@v7
         with:
@@ -44,7 +45,7 @@ jobs:
       - name: Collect LaTeX PDFs
         run: |
           mkdir -p pdf
-          for f in resume template cover-letter; do cp "latex/$f.pdf" "pdf/$f-latex.pdf"; done
+          for f in resume template cover-letter junior; do cp "latex/$f.pdf" "pdf/$f-latex.pdf"; done
 
       - name: Compile Typst
         run: make typst

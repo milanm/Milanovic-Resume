@@ -1,8 +1,8 @@
 # Build every PDF, run the ATS check, render the README previews.
-# Needs: XeLaTeX + latexmk (TeX Live or MiKTeX), Typst 0.14+, poppler-utils, Python 3 with pdfminer.six.
+# Needs: LuaLaTeX + latexmk from a current TeX Live or MiKTeX (CI uses the latest TeX Live), Typst 0.14+, poppler-utils, Python 3 with pdfminer.six.
 
 TYPST    ?= typst
-DOCS     := resume template cover-letter
+DOCS     := resume template cover-letter junior
 PKG_VER  := $(shell sed -n 's/^version = "\(.*\)"/\1/p' typst/typst.toml)
 
 # ---- What the ATS check expects to find. CHANGE THESE when you put in your own details.
@@ -11,6 +11,7 @@ RESUME_ORDER   := "Milanović" SKILLS "Technical strategy" "PROFESSIONAL EXPERIE
 RESUME_HAS     := "milan@example.com" "cloud-native"
 TEMPLATE_ORDER := "Your Name" SKILLS "Language 1" "PROFESSIONAL EXPERIENCE" "SELECTED PROJECTS" EDUCATION
 LETTER_ORDER   := "Milanović" "Dear Ms. Kim" "Sincerely"
+JUNIOR_ORDER   := "Ana Petrović" SKILLS "C\#" "PROFESSIONAL EXPERIENCE" "SELECTED PROJECTS" EDUCATION
 # One page by default. Raise it if you decide your experience needs two.
 MAX_PAGES      := 1
 
@@ -34,19 +35,24 @@ check:
 	for e in latex typst; do \
 	  python3 scripts/check_pdf.py pdf/resume-$$e.pdf --max-pages $(MAX_PAGES) --expect $(RESUME_ORDER) --contains $(RESUME_HAS) && \
 	  python3 scripts/check_pdf.py pdf/template-$$e.pdf --max-pages $(MAX_PAGES) --expect $(TEMPLATE_ORDER) && \
-	  python3 scripts/check_pdf.py pdf/cover-letter-$$e.pdf --expect $(LETTER_ORDER) || exit 1; \
+	  python3 scripts/check_pdf.py pdf/cover-letter-$$e.pdf --expect $(LETTER_ORDER) && \
+	  python3 scripts/check_pdf.py pdf/junior-$$e.pdf --max-pages $(MAX_PAGES) --expect $(JUNIOR_ORDER) || exit 1; \
 	done
-	# pdfminer.six on the Typst output: stricter text layer (it ignores ActualText).
-	# Its layout heuristic reorders centred headings, so it checks content, not order.
-	python3 scripts/check_pdf.py pdf/resume-typst.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(RESUME_ORDER) $(RESUME_HAS)
-	python3 scripts/check_pdf.py pdf/template-typst.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(TEMPLATE_ORDER)
-	python3 scripts/check_pdf.py pdf/cover-letter-typst.pdf --parser pdfminer --contains $(LETTER_ORDER)
+	# pdfminer.six: a parser that ignores ActualText hints. Its layout heuristic
+	# reorders centred headings, so it checks content, not order.
+	for e in latex typst; do \
+	  python3 scripts/check_pdf.py pdf/resume-$$e.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(RESUME_ORDER) $(RESUME_HAS) && \
+	  python3 scripts/check_pdf.py pdf/template-$$e.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(TEMPLATE_ORDER) && \
+	  python3 scripts/check_pdf.py pdf/cover-letter-$$e.pdf --parser pdfminer --contains $(LETTER_ORDER) && \
+	  python3 scripts/check_pdf.py pdf/junior-$$e.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(JUNIOR_ORDER) || exit 1; \
+	done
 
 previews:
 	@mkdir -p images
 	pdftoppm -r 110 -png -singlefile pdf/resume-latex.pdf images/resume
 	pdftoppm -r 110 -png -singlefile pdf/template-latex.pdf images/template
 	pdftoppm -r 110 -png -singlefile pdf/cover-letter-latex.pdf images/cover-letter
+	pdftoppm -r 110 -png -singlefile pdf/junior-latex.pdf images/junior
 
 # Typst Universe: install the package into a local package path and compile the
 # template exactly as `typst init @preview/milanovic-resume` would create it.
