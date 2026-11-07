@@ -76,4 +76,4 @@ Prefer another font? Pass it: `font: "Source Sans Pro"`.
 
 ## License
 
-MIT. Source Sans 3 is by Adobe, licensed under the SIL Open Font License 1.1, and is not part of this package.
+The package code (`lib.typ`) is MIT. The template directory (`template/main.typ`, the file `typst init` copies into your project) is MIT-0, so your finished resume carries no license obligations. Both texts are in `LICENSE`. Source Sans 3 is by Adobe, licensed under the SIL Open Font License 1.1, and is not part of this package.
