@@ -4,8 +4,9 @@
 TYPST    ?= typst
 SECTIONS := SKILLS "PROFESSIONAL EXPERIENCE" EDUCATION CERTIFICATIONS LANGUAGES
 DOCS     := resume template cover-letter
+PKG_VER  := $(shell sed -n 's/^version = "\(.*\)"/\1/p' typst/typst.toml)
 
-.PHONY: all latex typst check previews overleaf clean
+.PHONY: all latex typst check previews overleaf universe clean
 
 all: latex typst check
 
@@ -33,6 +34,16 @@ previews:
 	pdftoppm -r 110 -png -singlefile pdf/resume-latex.pdf images/resume
 	pdftoppm -r 110 -png -singlefile pdf/template-latex.pdf images/template
 	pdftoppm -r 110 -png -singlefile pdf/cover-letter-latex.pdf images/cover-letter
+
+# Typst Universe: install the package into a local package path and compile the
+# template exactly as `typst init @preview/milanovic-resume` would create it.
+universe:
+	rm -rf build/pkg build/init
+	mkdir -p build/pkg/preview/milanovic-resume/$(PKG_VER) build/init
+	cp -r typst/lib.typ typst/typst.toml typst/README.md typst/LICENSE typst/template build/pkg/preview/milanovic-resume/$(PKG_VER)/
+	cp typst/template/main.typ build/init/
+	$(TYPST) compile --package-path build/pkg --ignore-system-fonts --font-path fonts build/init/main.typ build/init/main.pdf
+	python3 scripts/check_pdf.py build/init/main.pdf --expect SKILLS "PROFESSIONAL EXPERIENCE" "SELECTED PROJECTS" EDUCATION
 
 # Zip for "Open in Overleaf": LaTeX files and fonts in one flat folder.
 overleaf:

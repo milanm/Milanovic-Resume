@@ -49,6 +49,9 @@ jobs:
       - name: Compile Typst
         run: make typst
 
+      - name: Typst Universe template compiles
+        run: make universe
+
       - name: ATS check (one page, clean text layer, reading order)
         run: make check
 
