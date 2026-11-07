@@ -7,11 +7,12 @@ ActualText hints some PDF writers add, so it is the stricter of the two.
 
 Checks:
   1. Page count: one page by default ("One page. Period.").
-  2. Text layer: every character a parser extracts is the character you typed.
+  2. Text exists: at least --min-words words come out (a blank or image-only PDF fails).
+  3. Text layer: every character a parser extracts is the character you typed.
      Fails on ligature glyphs (U+FB00-FB06), replacement characters (U+FFFD),
      private-use glyphs and look-alike hyphens (U+2010, U+2011) that break keyword search.
-  3. Reading order: the section headings come out in the order they appear on the page.
-  4. Required strings: e.g. your name and email survive extraction intact.
+  4. Reading order: the strings passed to --expect come out in that order.
+  5. Required strings: e.g. your email survives extraction intact.
 
 Usage:
   python3 scripts/check_pdf.py pdf/resume-latex.pdf --expect SKILLS "PROFESSIONAL EXPERIENCE" EDUCATION
@@ -59,9 +60,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("pdf")
     ap.add_argument("--max-pages", type=int, default=1)
-    ap.add_argument("--expect", nargs="*", default=[], help="section headings, in page order")
+    ap.add_argument("--expect", nargs="*", default=[], help="strings (e.g. headings) that must appear in this order")
     ap.add_argument("--contains", nargs="*", default=[], help="strings that must survive extraction")
     ap.add_argument("--parser", choices=["poppler", "pdfminer"], default="poppler")
+    ap.add_argument("--min-words", type=int, default=50, help="fail if fewer words are extracted (default 50)")
     ap.add_argument("--show", action="store_true", help="print the extracted text")
     args = ap.parse_args()
 
@@ -73,6 +75,10 @@ def main():
     text = extract(args.pdf, args.parser)
     if args.show:
         print(text)
+
+    words = len(text.split())
+    if words < args.min_words:
+        errors.append(f"only {words} words extracted (minimum {args.min_words}): blank page, image-only PDF or broken text layer")
 
     for ch, why in BAD_CHARS.items():
         n = text.count(ch)
@@ -87,7 +93,7 @@ def main():
         found = text.find(heading, pos + 1)
         if found < 0:
             where = "missing" if heading not in text else "out of order"
-            errors.append(f"heading '{heading}' is {where} in the extracted text")
+            errors.append(f"'{heading}' is {where} in the extracted text")
         else:
             pos = found
 
@@ -102,7 +108,7 @@ def main():
             print(f"  - {e}")
         sys.exit(1)
     order = ", reading order OK" if args.expect else ""
-    print(f"PASS {name}: {pages} page(s), {len(text.split())} words extracted{order}")
+    print(f"PASS {name}: {pages} page(s), {words} words extracted{order}")
 
 
 if __name__ == "__main__":

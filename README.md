@@ -15,7 +15,7 @@ I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose o
   <img src="images/cover-letter.png" width="32%" alt="Cover letter">
 </p>
 
-**[Download the PDF (LaTeX)](pdf/resume-latex.pdf)** · **[Download the PDF (Typst)](pdf/resume-typst.pdf)** · **[Open in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=resume.tex)**
+**[Create your resume in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=template.tex)** · [Open the filled example in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=resume.tex) · [Example PDF (LaTeX)](pdf/resume-latex.pdf) · [Example PDF (Typst)](pdf/resume-typst.pdf)
 
 ## What you get
 
@@ -31,15 +31,15 @@ I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose o
 
 | | This template | Typical LaTeX resume template |
 |---|---|---|
-| Layout | One column. The order you see is the order a parser reads. | Often two columns, read in an unpredictable order |
-| Length | Warns in the log when you spill onto page 2. CI fails the build. | No limit |
+| Layout | One column, skills included (one line, separated by dots). CI checks with poppler that your headings and a line from each section come out in page order | Often two columns, read in an unpredictable order |
+| Length | CI fails the build on a second page, for both engines. The LaTeX class also warns in the log while you write (Typst has no such warning) | No limit |
 | Text layer | Tested on every commit: no ligature glyphs, real hyphens, `ć` and `ü` intact. Poppler for both builds, pdfminer.six for the Typst build | Untested |
 | Font | Source Sans 3, open license, bundled. Same result on Windows, macOS, Linux and Overleaf | System or Mac-only fonts |
 | Engines | LaTeX (XeLaTeX) and Typst, same design | LaTeX only |
 | Settings | Paper, accent colour, font size and ligatures are class options | Edit the style file |
 | Cover letter | Included, matching style | Rarely |
 
-The text-layer check paid off while I was building this. XeLaTeX wrote every plain hyphen into the PDF as a non-breaking hyphen (U+2011). The page looked right, but a keyword search for "cloud-native" found nothing. The class now adds ActualText hints, so poppler (`pdftotext`) and pdfium read real hyphens. Parsers that ignore those hints, such as pdfminer.six and pypdf, still see U+2011 in the XeLaTeX build. The Typst build is clean in all four, which is why CI runs the stricter pdfminer.six pass on it.
+The text-layer check paid off while I was building this. XeLaTeX wrote every plain hyphen into the PDF as a non-breaking hyphen (U+2011). The page looked right, but a keyword search for "cloud-native" found nothing. The class now adds ActualText hints, so poppler (`pdftotext`) and pdfium read real hyphens. Parsers that ignore those hints, such as pdfminer.six and pypdf, still see U+2011 in the XeLaTeX build. The Typst build is clean in all four, which is why CI runs the stricter pdfminer.six pass on it. pdfminer.six also reorders centred headings with its layout heuristic, whatever the template, so CI uses it for the text layer and checks reading order with poppler.
 
 ### Which engine should I use?
 
@@ -50,9 +50,9 @@ The text-layer check paid off while I was building this. XeLaTeX wrote every pla
 
 ### Overleaf (nothing to install)
 
-1. Click **[Open in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=resume.tex)**.
+1. Click **[Create your resume in Overleaf](https://www.overleaf.com/docs?snip_uri=https://github.com/milanm/Milanovic-Resume/releases/latest/download/Milanovic-Resume-overleaf.zip&engine=xelatex&main_document=template.tex)**. It opens `template.tex` with placeholders; my filled example is `resume.tex` in the same project.
 2. Check that **Menu → Compiler** says **XeLaTeX**.
-3. Edit `resume.tex` or start from `template.tex`.
+3. Replace the placeholders and keep an eye on the log: the class warns as soon as you spill onto page 2.
 
 ### LaTeX on your machine
 
@@ -65,12 +65,14 @@ latexmk resume.tex      # latexmkrc already selects XeLaTeX
 
 ### Typst
 
-Needs Typst 0.14 or newer. On [typst.app](https://typst.app), upload `lib.typ`, your `.typ` file and the fonts from `fonts/`.
+Needs Typst 0.14 or newer. On [typst.app](https://typst.app), upload `lib.typ`, `template.typ` and the fonts from `fonts/`.
 
 ```bash
 cd typst
-typst compile --font-path ../fonts resume.typ
+typst compile --font-path ../fonts template.typ   # starter; resume.typ is the filled example
 ```
+
+A Typst Universe package (`typst init @preview/milanovic-resume`) is in review at [typst/packages#6333](https://github.com/typst/packages/pull/6333). Until it is merged, use the files above.
 
 ### Everything at once
 
@@ -106,7 +108,7 @@ Typst takes the same settings as arguments: `paper: "us-letter"`, `accent: rgb("
 | `\keywords{}` | `keywords:` | Written to the PDF metadata |
 | `\summary{}` | `#summary[]` | Short paragraph under the header |
 | `\section{}` | `= Heading` | Centred section heading with rules |
-| `skills` environment | `#skills(..)` | Two-column bullet list |
+| `skills` environment | `#skills(..)` | Skills on one line, separated by dots. `\begin{skills}[columns]` or `columns: true` gives a two-column bullet list; pdfminer.six reads its left column before the heading |
 | `\job{Company}{Title}{Location}{Dates}` | `#job("Company", title:, location:, dates:)` | Position header, bullets follow |
 | `\project{Name}{Link}{Stack}` | `#project("Name", info:, stack:)` | Project header, bullets follow |
 | `\education{Degree}{School}{Year}` | `#education("Degree", school:, year:)` | Education line inside a list |
@@ -118,14 +120,19 @@ Typst takes the same settings as arguments: `paper: "us-letter"`, `accent: rgb("
 `scripts/check_pdf.py` reads the PDF the way a parser does, with poppler's `pdftotext`, and fails when:
 
 - the PDF has more than one page,
+- fewer than 50 words come out (a blank or image-only PDF),
 - the text contains ligature glyphs, look-alike hyphens, soft hyphens, replacement or private-use characters,
-- the section headings come out in a different order than they appear on the page,
-- a string you list (your name, your email) does not survive extraction.
+- the strings you pass to `--expect` come out in a different order (use your headings plus a line from each section),
+- a string you pass to `--contains` (your email, a key skill) does not survive extraction.
 
 ```bash
-python3 scripts/check_pdf.py pdf/resume-latex.pdf --expect SKILLS "PROFESSIONAL EXPERIENCE" EDUCATION --contains "your@email.com" --show
-python3 scripts/check_pdf.py pdf/resume-typst.pdf --parser pdfminer   # stricter parser, needs: pip install pdfminer.six
+python3 scripts/check_pdf.py pdf/resume-latex.pdf --expect "Your Name" SKILLS "PROFESSIONAL EXPERIENCE" EDUCATION --contains "you@example.com" --show
+python3 scripts/check_pdf.py pdf/resume-typst.pdf --parser pdfminer --contains "you@example.com"   # needs: pip install pdfminer.six
 ```
+
+### Run it on your own resume
+
+`make check` and CI look for my name, my example email and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, or the build will fail. Strings in an `*_ORDER` variable must appear in that order.
 
 Run it on your own PDF before you send it anywhere. `--show` prints what the parser sees. Two open-source parsers are not every ATS on the market, so treat a pass as a good sign, not a guarantee.
 
@@ -154,5 +161,7 @@ This repo is the free LaTeX and Typst template. The **[Premium Resume Package](h
 - The repo layout follows the example of [Deedy Resume](https://github.com/deedy/Deedy-Resume), which showed how useful a well-made open resume template can be.
 
 ## Changelog
+
+**v1.1.0** (2026-11-07): skills default to one line separated by dots (`[columns]` / `columns: true` keeps the two-column list); the build stops at the first compile error and deletes old PDFs first; the check fails on blank or near-blank PDFs and its expected strings are Makefile variables; "Create your resume" Overleaf link opens the starter template.
 
 **v1.0.0** (2026-11-07): first release. LaTeX class and Typst library with the same design, resume, starter and cover letter examples, ATS check in CI with two parsers, Overleaf zip on every release.

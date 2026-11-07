@@ -190,14 +190,33 @@
   \ifx\relax#3\relax\else\hfill{\itshape\small #3}\fi\par\nopagebreak
 }
 
-% Two-column bullet list for skills. Column order stays top-to-bottom,
-% left column first, which is the order ATS parsers read it in.
-\newenvironment{skills}{%
-  \setlength{\columnsep}{1.6em}%
-  \setlength{\multicolsep}{0pt}%
-  \begin{multicols}{2}\begin{itemize}[topsep=0pt]%
+% Skills. Default: one line of items separated by middle dots, so every parser
+% reads them right after the SKILLS heading. \begin{skills}[columns] gives the
+% two-column bullet list instead; it looks closer to a classic resume, but
+% pdfminer.six reads its left column before the heading.
+\newif\ifMR@firstskill
+\def\MR@columnsword{columns}
+\newenvironment{skills}[1][inline]{%
+  \def\MR@skillstyle{#1}%
+  \ifx\MR@skillstyle\MR@columnsword
+    \setlength{\columnsep}{1.6em}%
+    \setlength{\multicolsep}{0pt}%
+    \begin{multicols}{2}\begin{itemize}[topsep=0pt]%
+  \else
+    % Each skill sits in an unbreakable box; lines break only after a dot.
+    \par\noindent\MR@firstskilltrue
+    \def\item{%
+      \ifMR@firstskill\global\MR@firstskillfalse
+      \else\unskip\egroup\nobreak\hspace{0.45em}\textperiodcentered\hspace{0.45em}\fi
+      \hbox\bgroup\ignorespaces}%
+    \setlength{\baselineskip}{1.32\MR@fs}%
+  \fi
 }{%
-  \end{itemize}\end{multicols}\vspace{3pt}%
+  \ifx\MR@skillstyle\MR@columnsword
+    \end{itemize}\end{multicols}\vspace{3pt}%
+  \else
+    \unskip\egroup\par\vspace{2pt}%
+  \fi
 }
 
 % Plain line for certifications, languages, awards.
