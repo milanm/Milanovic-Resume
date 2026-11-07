@@ -11,6 +11,8 @@ RESUME_ORDER   := "Milanović" SKILLS "Technical strategy" "PROFESSIONAL EXPERIE
 RESUME_HAS     := "milan@example.com" "cloud-native"
 TEMPLATE_ORDER := "Your Name" SKILLS "Language 1" "PROFESSIONAL EXPERIENCE" "SELECTED PROJECTS" EDUCATION
 LETTER_ORDER   := "Milanović" "Dear Ms. Kim" "Sincerely"
+# One page by default. Raise it if you decide your experience needs two.
+MAX_PAGES      := 1
 
 .PHONY: all latex typst check previews overleaf universe clean
 
@@ -30,14 +32,14 @@ typst:
 
 check:
 	for e in latex typst; do \
-	  python3 scripts/check_pdf.py pdf/resume-$$e.pdf --expect $(RESUME_ORDER) --contains $(RESUME_HAS) && \
-	  python3 scripts/check_pdf.py pdf/template-$$e.pdf --expect $(TEMPLATE_ORDER) && \
+	  python3 scripts/check_pdf.py pdf/resume-$$e.pdf --max-pages $(MAX_PAGES) --expect $(RESUME_ORDER) --contains $(RESUME_HAS) && \
+	  python3 scripts/check_pdf.py pdf/template-$$e.pdf --max-pages $(MAX_PAGES) --expect $(TEMPLATE_ORDER) && \
 	  python3 scripts/check_pdf.py pdf/cover-letter-$$e.pdf --expect $(LETTER_ORDER) || exit 1; \
 	done
 	# pdfminer.six on the Typst output: stricter text layer (it ignores ActualText).
 	# Its layout heuristic reorders centred headings, so it checks content, not order.
-	python3 scripts/check_pdf.py pdf/resume-typst.pdf --parser pdfminer --contains $(RESUME_ORDER) $(RESUME_HAS)
-	python3 scripts/check_pdf.py pdf/template-typst.pdf --parser pdfminer --contains $(TEMPLATE_ORDER)
+	python3 scripts/check_pdf.py pdf/resume-typst.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(RESUME_ORDER) $(RESUME_HAS)
+	python3 scripts/check_pdf.py pdf/template-typst.pdf --max-pages $(MAX_PAGES) --parser pdfminer --contains $(TEMPLATE_ORDER)
 	python3 scripts/check_pdf.py pdf/cover-letter-typst.pdf --parser pdfminer --contains $(LETTER_ORDER)
 
 previews:

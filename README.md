@@ -132,7 +132,7 @@ python3 scripts/check_pdf.py pdf/resume-typst.pdf --parser pdfminer --contains "
 
 ### Run it on your own resume
 
-`make check` and CI look for my name, my example email and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, or the build will fail. Strings in an `*_ORDER` variable must appear in that order.
+`make check` and CI look for my name, my example email and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, or the build will fail. Strings in an `*_ORDER` variable must appear in that order. `MAX_PAGES` is 1; raise it if you decide your experience needs two pages (and set `onepage=false` in LaTeX to silence the warning).
 
 Run it on your own PDF before you send it anywhere. `--show` prints what the parser sees. Two open-source parsers are not every ATS on the market, so treat a pass as a good sign, not a guarantee.
 
@@ -147,6 +147,7 @@ The template fixes the format. The content is still on you.
 5. **The top third decides.** Spend most of your editing time on the headline, summary and first job.
 6. **Tailor it.** Mirror the job description's words for the skills you really have.
 7. **Proofread.** A typo on a resume reads like a bug in production.
+8. **Full names, consistent dates.** Write the job title in full and give the company its legal form (Inc., LLC, GmbH). [Greenhouse lists](https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse) abbreviated titles and company names without one among the reasons a parse fails. Use one date format everywhere, such as "Mar 2023 – Present".
 
 ## Want the Word and Google Docs version?
 
@@ -161,6 +162,8 @@ This repo is the free LaTeX and Typst template. The **[Premium Resume Package](h
 - The repo layout follows the example of [Deedy Resume](https://github.com/deedy/Deedy-Resume), which showed how useful a well-made open resume template can be.
 
 ## Changelog
+
+**v1.1.1** (2026-11-07): starter template shows full job titles, company legal forms and "Mon YYYY" dates; `MAX_PAGES` in the Makefile; Dependabot keeps the GitHub Actions current.
 
 **v1.1.0** (2026-11-07): skills default to one line separated by dots (`[columns]` / `columns: true` keeps the two-column list); the build stops at the first compile error and deletes old PDFs first; the check fails on blank or near-blank PDFs and its expected strings are Makefile variables; "Create your resume" Overleaf link opens the starter template.
 
