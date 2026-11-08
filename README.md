@@ -39,7 +39,7 @@ Having reviewed 1,000+ resumes as a hiring manager, I've seen most of them fail 
 | Text layer | Tested on every commit with poppler and pdfminer.six, both engines: no ligature glyphs, real hyphens, `ć` and `ü` intact | Untested |
 | ATS fields | CI checks with three extractors that each job's company, title and dates come out together. Three commercial parsers tested once ([results](#commercial-parsers)) | Untested |
 | Accessibility | Tagged PDF with real headings: PDF/UA-2 from LaTeX, PDF/UA-1 from Typst, both validated with veraPDF on every commit | Untagged |
-| Edge cases | Long names and links, US Letter, 10 and 12 pt and a resume that overflows are built and checked on every commit, plus a pixel comparison of every page | Untested |
+| Edge cases | Long names and links, US Letter, 10 and 12 pt and a resume that overflows are built and checked on every commit, plus a pixel comparison of page 1 of every PDF | Untested |
 | Font | Source Sans 3, open license, bundled. Same result on Windows, macOS, Linux and Overleaf | System or Mac-only fonts |
 | Engines | LaTeX (LuaLaTeX) and Typst, same design | LaTeX only |
 | Settings | Paper, accent colour, font size and ligatures are class options | Edit the style file |
@@ -147,11 +147,11 @@ python3 scripts/check_pdf.py pdf/resume-latex.pdf --parser pdfminer --contains "
 
 ### Fields
 
-`scripts/check_fields.py` verifies the output of poppler, pdfminer.six and PyMuPDF against `tests/fields/resume.yml` and `tests/fields/junior.yml`. It fails if the name, email, phone number, location, a skill, a certification or a language is missing, or if a job's title, dates or location isn't found between the company of that job and the company of the following job. A title can be matched to a company only if they're extracted together.
+`scripts/check_fields.py` verifies the output of poppler, pdfminer.six and PyMuPDF against `tests/fields/resume.yml` and `tests/fields/junior.yml`. It fails if the name, email, phone number, location, a skill, a certification or a language is missing, or if a job's title, dates or location isn't found between the company of that job and the company of the following job. A parser can attach a title to a company only if the two come out together.
 
 ### Commercial parsers
 
-These open-source extractors aren't what an ATS runs. `scripts/ats_parsers.py` queries three commercial resume parsers via [Eden AI](https://www.edenai.co) and checks whether each one gets the fields into the correct slots (does a job title get parsed under the right company, or does it end up somewhere else in the output?). I ran it on November 8, 2026. The raw responses are stored in `tests/ats/`.
+These open-source extractors aren't what an ATS runs. `scripts/ats_parsers.py` queries three commercial resume parsers via [Eden AI](https://www.edenai.co) and counts the fields each one puts in the correct slot, such as a job title under the right company rather than somewhere else in the output. I ran it on November 8, 2026. The raw responses are stored in `tests/ats/`. A fourth parser, Senseloaf, was down on Eden AI that day.
 
 | PDF | Affinda | Extracta | Klippa |
 |---|---|---|---|
@@ -160,7 +160,7 @@ These open-source extractors aren't what an ATS runs. `scripts/ats_parsers.py` q
 | `junior-latex.pdf` | 13/14 | 14/14 | 14/14 |
 | `junior-typst.pdf` | 13/14 | 14/14 | 14/14 |
 
-All three parsers correctly identified the name, email, phone number, location, and the company, title, start date and end date for every job. The only misses are in the degrees. Affinda places the degree level ("Master") in the degree field and truncates the degree name ("M.Sc. in"). Klippa doesn't return a degree name for my resume, but it does for the junior resume, which uses the exact same layout. Both engines get the same scores, which suggests the parsers are at fault, not the layout.
+All three parsers correctly identified the name, email, phone number, location, and the company, title, start date and end date for every job. Every miss is a degree name. Affinda places the degree level ("Master") in the degree field and truncates the degree name ("M.Sc. in"). Klippa doesn't return a degree name for my resume, but it does for the junior resume, which uses the exact same layout. Both engines get the same scores, which suggests the parsers are at fault, not the layout.
 
 Each PDF costs about $0.27 in Eden AI credits, so the test doesn't run in CI:
 

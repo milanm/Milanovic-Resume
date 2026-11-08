@@ -50,6 +50,23 @@ def extract(pdf):
     return {k: norm(v) for k, v in out.items()}
 
 
+def load_truth(path):
+    """Read a tests/fields/*.yml file and say clearly what is missing instead of crashing later."""
+    with open(path, encoding="utf-8") as f:
+        truth = yaml.safe_load(f) or {}
+    problems = []
+    for i, job in enumerate(truth.get("work") or [], 1):
+        missing = [k for k in ("company", "title", "start", "end") if not job.get(k)]
+        if missing:
+            problems.append(f"job {i} has no {', '.join(missing)}")
+    for i, edu in enumerate(truth.get("education") or [], 1):
+        if not edu.get("degree"):
+            problems.append(f"education {i} has no degree")
+    if problems:
+        sys.exit(f"{path}: " + "; ".join(problems) + " (see tests/fields/resume.yml for the format)")
+    return truth
+
+
 def check(text, truth):
     errors = []
 
@@ -103,8 +120,7 @@ def main():
     ap.add_argument("--show", action="store_true", help="print each extractor's normalized text")
     args = ap.parse_args()
 
-    with open(args.truth, encoding="utf-8") as f:
-        truth = yaml.safe_load(f)
+    truth = load_truth(args.truth)
     texts = extract(args.pdf)
     failed = False
     fields = 4 + sum(len(truth.get(k, [])) for k in ("skills", "certifications", "languages")) \

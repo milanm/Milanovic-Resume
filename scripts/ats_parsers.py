@@ -35,7 +35,7 @@ import unicodedata
 from datetime import date
 from pathlib import Path
 
-import yaml
+from check_fields import load_truth  # same ground-truth loader as the field check
 
 ENDPOINT = "https://api.edenai.run/v2/ocr/resume_parser"
 DEFAULT_PROVIDERS = "affinda,extracta,klippa"
@@ -88,27 +88,28 @@ def location_text(loc):
 
 
 # ------------------------------------------------------------------ scoring
-def score(data, truth):
+def score(data, truth, run_year):
     """Return a list of (field, wanted, found, ok) rows for one parser's extracted_data."""
     rows = []
     info = data.get("personal_infos") or {}
 
-    name = info.get("name") or {}
-    found = name.get("raw_name") or " ".join(x for x in (name.get("first_name"), name.get("last_name")) if x)
-    rows.append(("name", truth["name"], found, name_key(found) == name_key(truth["name"])
-                 or similar(name_key(found), name_key(truth["name"]), 0.9)))
-
-    mails = info.get("mails") or []
-    rows.append(("email", truth["email"], ", ".join(mails),
-                 any(m.strip().lower() == truth["email"].lower() for m in mails)))
-
-    phones = info.get("phones") or []
-    rows.append(("phone", truth["phone"], ", ".join(phones),
-                 any(digits(p).endswith(digits(truth["phone"])[-8:]) for p in phones)))
-
-    found = location_text(info.get("address"))
-    city = truth["location"].split(",")[0]
-    rows.append(("location", truth["location"], found, bool(found) and key(city) in key(found)))
+    if truth.get("name"):
+        name = info.get("name") or {}
+        found = name.get("raw_name") or " ".join(x for x in (name.get("first_name"), name.get("last_name")) if x)
+        rows.append(("name", truth["name"], found, name_key(found) == name_key(truth["name"])
+                     or similar(name_key(found), name_key(truth["name"]), 0.9)))
+    if truth.get("email"):
+        mails = info.get("mails") or []
+        rows.append(("email", truth["email"], ", ".join(mails),
+                     any(m.strip().lower() == truth["email"].lower() for m in mails)))
+    if truth.get("phone"):
+        phones = info.get("phones") or []
+        rows.append(("phone", truth["phone"], ", ".join(phones),
+                     any(digits(p).endswith(digits(truth["phone"])[-8:]) for p in phones)))
+    if truth.get("location"):
+        found = location_text(info.get("address"))
+        city = truth["location"].split(",")[0]
+        rows.append(("location", truth["location"], found, bool(found) and key(city) in key(found)))
 
     entries = (data.get("work_experience") or {}).get("entries") or []
     for i, job in enumerate(truth.get("work", []), 1):
@@ -123,7 +124,7 @@ def score(data, truth):
         rows.append((f"{label} start", job["start"], hit.get("start_date") or "", year(hit.get("start_date")) == year(job["start"])))
         end = hit.get("end_date")
         if is_present(job["end"]):  # some parsers turn "Present" into the date they parsed the file
-            ok = is_present(end) or year(end) >= str(date.today().year - 1)
+            ok = is_present(end) or year(end) >= str(run_year - 1)
         else:
             ok = year(end) == year(job["end"])
         rows.append((f"{label} end", job["end"], end or "(empty = present)", ok))
@@ -180,6 +181,8 @@ def call_eden(pdf, providers):
 
 
 def report(source, raw, truth, show_all):
+    # Score "Present" against the day the parsers ran, not today, so saved results stay reproducible.
+    run_year = int(str(raw.get("_run_date", date.today().isoformat()))[:4])
     results = {}
     for provider, body in sorted(raw.items()):
         if not isinstance(body, dict):
@@ -189,7 +192,7 @@ def report(source, raw, truth, show_all):
             print(f"\n{provider}: failed ({err.get('message', err) if isinstance(err, dict) else err})")
             results[provider] = None
             continue
-        rows = score(body.get("extracted_data") or {}, truth)
+        rows = score(body.get("extracted_data") or {}, truth, run_year)
         ok = sum(r[3] for r in rows)
         results[provider] = (ok, len(rows))
         print(f"\n{provider}: {ok}/{len(rows)} fields in the right slot  [{source}]")
@@ -216,6 +219,7 @@ def main():
             ap.error("PDF mode takes exactly: PDF TRUTH.yml")
         pdf, truth_file = args.inputs
         raw = call_eden(pdf, args.providers)
+        raw["_run_date"] = date.today().isoformat()
         if args.save:
             Path(args.save).parent.mkdir(parents=True, exist_ok=True)
             Path(args.save).write_text(json.dumps(raw, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -231,7 +235,7 @@ def main():
 
     table = []
     for label, raw, truth_file in jobs:
-        truth = yaml.safe_load(Path(truth_file).read_text(encoding="utf-8"))
+        truth = load_truth(truth_file)
         for provider, res in report(label, raw, truth, args.all).items():
             table.append((label, provider, res))
 

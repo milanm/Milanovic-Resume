@@ -5,12 +5,12 @@ The examples are tuned to fit. Real resumes are not: longer names, longer links,
 other font sizes, too much experience. This script makes those variants from
 latex/resume.tex and typst/resume.typ, compiles them with both engines and checks:
 
-  letter      US Letter paper                     one page, headings in order
-  font10      10 pt base size                     one page, headings in order
-  font12      12 pt base size                     at most two pages, headings in order
-  long        long hyphenated name, long URL      one page, name and URL extracted whole
-  columns     two-column skills list              one page, every skill extracted
-  overflow    experience section three times      the one-page check FAILS, and LaTeX warns
+  letter      US Letter paper                     within the page limit, headings in order
+  font10      10 pt base size                     within the page limit, headings in order
+  font12      12 pt base size                     one extra page allowed, headings in order
+  long        long hyphenated name, long URL      within the page limit, name and URL extracted whole
+  columns     two-column skills list              within the page limit, every skill extracted
+  overflow    experience section repeated         the page check FAILS, and LaTeX warns
 
 Every variant also has to keep all text inside the side margins (nothing runs off the
 page) and, in LaTeX, compile without an "Overfull \\hbox" warning.
@@ -21,6 +21,7 @@ All of them are git-ignored.
 Usage:
   python3 scripts/edge_cases.py                  # both engines
   python3 scripts/edge_cases.py --engine typst   # one engine
+  python3 scripts/edge_cases.py --max-pages 2    # if your resume is allowed two pages
   (CI: --write-only, compile latex/edge-*.tex with LuaLaTeX, then --latex-prebuilt)
 Needs: latexmk + LuaLaTeX, Typst, poppler-utils, pip install pymupdf pdfminer.six
 """
@@ -54,12 +55,13 @@ def experience(text, heading, next_heading):
     return a, a + n.start() if n else len(text)
 
 
-def latex_variants(src):
+def latex_variants(src, max_pages=1):
     def opts(o):
         return re.sub(r"(?m)^\\documentclass(?:\[([^\]]*)\])?\{milanovic-resume\}",
                       lambda m: rf"\documentclass[{m.group(1) + ',' if m.group(1) else ''}{o}]{{milanovic-resume}}", src, count=1)
     long = re.sub(r"\\name\{[^}]*\}", lambda m: rf"\name{{{LONG_NAME}}}", src, count=1)
-    long = long.replace("\\contact{%", "\\contact{%\n  \\href{https://www." + LONG_URL + "}{" + LONG_URL + "} \\sep", 1)
+    url = "\\href{https://www." + LONG_URL + "}{" + LONG_URL + "} \\sep "
+    long = re.sub(r"\\contact\{%?", lambda m: m.group(0) + "\n  " + url, long, count=1)
     a, b = experience(src, r"\\section\{Professional Experience\}", r"\\section\{|\\end\{document\}")
     return {
         "letter": opts("paper=letter"),
@@ -67,11 +69,11 @@ def latex_variants(src):
         "font12": opts("fontsize=12"),
         "long": long,
         "columns": re.sub(r"\\begin\{skills\}(\[[^\]]*\])?", lambda m: r"\begin{skills}[columns]", src, count=1),
-        "overflow": src[:b] + src[a:b] * 2 + src[b:],
+        "overflow": src[:b] + src[a:b] * 2 * max_pages + src[b:],
     }
 
 
-def typst_variants(src):
+def typst_variants(src, max_pages=1):
     def opts(key, value):
         # drop the argument if the resume already sets it: Typst refuses duplicates
         out = re.sub(rf"(?m)^[ \t]*{key}:[^\n]*\n", "", src)
@@ -85,7 +87,7 @@ def typst_variants(src):
         "font12": opts("font-size", "12pt"),
         "long": long,
         "columns": src.replace("#skills(", "#skills(columns: true,", 1),
-        "overflow": src[:b] + src[a:b] * 2 + src[b:],
+        "overflow": src[:b] + src[a:b] * 2 * max_pages + src[b:],
     }
 
 
@@ -155,21 +157,26 @@ def overfull(log):
             if l.startswith("Overfull \\hbox") and float(re.search(r"\(([\d.]+)pt", l).group(1)) > 0.5]
 
 
-def check(name, engine, pdf, log, order):
+def check(name, engine, pdf, log, order, source, max_pages=1):
     errors = []
     if pdf is None:
         tail = "\n    ".join([l for l in log.splitlines() if l.startswith("!") or "error" in l.lower()][:5])
         return [f"did not compile\n    {tail}"]
     if name == "overflow":
-        ok, _ = check_pdf(pdf, "--max-pages", "1")
+        ok, _ = check_pdf(pdf, "--max-pages", str(max_pages))
         if ok:
-            errors.append("one-page check passed on a two-page resume")
-        if engine == "latex" and "Your resume runs to" not in log:
+            errors.append(f"page check passed on a resume longer than {max_pages} page(s)")
+        warns = not re.search(r"onepage\s*=\s*false", source)
+        if engine == "latex" and warns and "Your resume runs to" not in log:
             errors.append("the class did not warn about the second page")
     else:
-        pages = "2" if name == "font12" else "1"
+        pages = str(max_pages + 1 if name == "font12" else max_pages)
         if name == "long":
-            args = ["--max-pages", pages, "--contains", "Konstantinopoulou-Papadimitriou", LONG_URL]
+            wanted = [x for x in ("Konstantinopoulou-Papadimitriou", LONG_URL) if x in source]
+            if len(wanted) < 2:
+                errors.append("could not put the long name or URL into the resume: "
+                              "does it use \\name{...} / \\contact{...} (name: / contact: in Typst)?")
+            args = ["--max-pages", pages, "--contains", *wanted]
         elif name == "columns":
             args = ["--max-pages", pages, "--contains", *order]
         else:
@@ -193,6 +200,7 @@ def main():
     ap.add_argument("--typst", default="typst", help="path to the typst binary")
     ap.add_argument("--expect", nargs="+", default=ORDER,
                     help="strings that must come out in this order (default: my resume's headings)")
+    ap.add_argument("--max-pages", type=int, default=1, help="pages the resume may have (MAX_PAGES in the Makefile)")
     ap.add_argument("--write-only", action="store_true", help="only write latex/edge-*.tex and typst/edge-*.typ")
     ap.add_argument("--latex-prebuilt", action="store_true",
                     help="check latex/edge-*.pdf and .log as they are instead of compiling them (CI)")
@@ -202,10 +210,10 @@ def main():
     jobs = []
     if args.engine in ("both", "latex"):
         src = (ROOT / "latex" / "resume.tex").read_text(encoding="utf-8")
-        jobs += [("latex", n, s) for n, s in latex_variants(src).items()]
+        jobs += [("latex", n, s) for n, s in latex_variants(src, args.max_pages).items()]
     if args.engine in ("both", "typst"):
         src = (ROOT / "typst" / "resume.typ").read_text(encoding="utf-8")
-        jobs += [("typst", n, s) for n, s in typst_variants(src).items()]
+        jobs += [("typst", n, s) for n, s in typst_variants(src, args.max_pages).items()]
 
     if args.write_only:
         for engine, name, source in jobs:
@@ -220,7 +228,7 @@ def main():
             pdf, log = build_latex(name, source, args.latex_prebuilt)
         else:
             pdf, log = build_typst(name, source, args.typst)
-        errors = check(name, engine, pdf, log, args.expect)
+        errors = check(name, engine, pdf, log, args.expect, source, args.max_pages)
         print(f"{'FAIL' if errors else 'PASS'} {engine:<5} {name}")
         for e in errors:
             print(f"    - {e}")

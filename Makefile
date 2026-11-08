@@ -62,7 +62,7 @@ fields:
 
 # Long names and links, US Letter, 10 and 12 pt, two-column skills, a resume that overflows.
 edge:
-	python3 scripts/edge_cases.py --typst $(TYPST) --expect $(RESUME_ORDER) $(EDGE_FLAGS)
+	python3 scripts/edge_cases.py --typst $(TYPST) --max-pages $(MAX_PAGES) --expect $(RESUME_ORDER) $(EDGE_FLAGS)
 
 # Page 1 of every PDF against tests/visual/*.png. After a deliberate design change: make baseline.
 visual:
@@ -101,7 +101,7 @@ universe:
 # Zip for "Open in Overleaf": LaTeX files and fonts in one flat folder.
 overleaf:
 	rm -rf build/overleaf && mkdir -p build/overleaf/fonts
-	cp latex/milanovic-resume.cls latex/*.tex latex/latexmkrc build/overleaf/
+	cp latex/milanovic-resume.cls $(foreach f,$(DOCS),latex/$(f).tex) latex/latexmkrc build/overleaf/
 	cp fonts/*.otf fonts/OFL.md build/overleaf/fonts/
 	cd build/overleaf && zip -qr ../Milanovic-Resume-overleaf.zip .
 

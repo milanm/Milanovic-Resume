@@ -668,5 +668,6 @@
     "status": "fail",
     "provider_status_code": null,
     "cost": 0.0
-  }
+  },
+  "_run_date": "2026-11-08"
 }

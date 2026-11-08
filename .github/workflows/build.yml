@@ -24,7 +24,7 @@ jobs:
           python-version: "3.12"
 
       - name: Write edge-case sources (long names, US Letter, font sizes, overflow)
-        run: python3 scripts/edge_cases.py --write-only
+        run: make edge EDGE_FLAGS=--write-only
 
       - name: Compile LaTeX (LuaLaTeX, tagged PDF)
         uses: xu-cheng/latex-action@v4
