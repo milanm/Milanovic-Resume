@@ -6,7 +6,7 @@
 
 A one-page, single-column resume template for software engineers, in **LaTeX and Typst**.
 
-I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose on things a template can fix: a second page nobody reads, a two-column layout the applicant tracking system (ATS) scrambles, a PDF where the parser can't find the word "cloud-native". This template has those rules built in, and CI checks them on every commit.
+Having reviewed 1,000+ resumes as a hiring manager, I've seen most of them fail on things a template can fix: a second page nobody reads, a two-column layout that confuses the applicant tracking system (ATS), a PDF where a search for "cloud-native" finds nothing. This template follows those rules, and CI checks that it keeps following them.
 
 ![Resume preview](images/resume.png)
 
@@ -36,13 +36,13 @@ I have reviewed more than 1,000 resumes as a hiring manager. Most of them lose o
 | Layout | One column, skills included (one line, separated by dots). CI checks with poppler that your headings and a line from each section come out in page order | Often two columns, read in an unpredictable order |
 | Length | CI fails the build on a second page, for both engines. The LaTeX class also warns in the log while you write (Typst has no such warning) | No limit |
 | Text layer | Tested on every commit with poppler and pdfminer.six, both engines: no ligature glyphs, real hyphens, `ć` and `ü` intact | Untested |
-| Accessibility | Tagged PDF from both engines (PDF/UA-2 from LaTeX), so screen readers and parsers get the structure | Untagged |
+| Accessibility | Tagged PDF from both engines | Untagged |
 | Font | Source Sans 3, open license, bundled. Same result on Windows, macOS, Linux and Overleaf | System or Mac-only fonts |
 | Engines | LaTeX (LuaLaTeX) and Typst, same design | LaTeX only |
 | Settings | Paper, accent colour, font size and ligatures are class options | Edit the style file |
 | Cover letter | Included, matching style | Rarely |
 
-The text-layer check paid off while I was building this. The first version compiled with XeLaTeX, which wrote every plain hyphen into the PDF as a non-breaking hyphen (U+2011) and positioned words without real spaces. The page looked right, but a keyword search for "cloud-native" found nothing, and pypdf read the summary as one long word. LuaLaTeX with a tagged PDF writes real hyphens and real spaces: poppler, pdfminer.six and pypdf now all read the same 428 words. pdfminer.six still reorders centred headings with its layout heuristic, whatever the template, so CI uses it for the text layer and checks reading order with poppler.
+I initially compiled the template with XeLaTeX, only to find that it converted every regular hyphen to a non-breaking hyphen (U+2011) and didn't use actual space characters between words in the generated PDF. Searching for "cloud-native" returned nothing, and pypdf extracted my entire summary as a single word. Switching to LuaLaTeX and generating a tagged PDF fixed both, and poppler, pdfminer.six and pypdf now agree on the word count (428). pdfminer.six still re-orders centred headings with its layout-based heuristic, which happens with any resume template, so CI uses pdfminer.six to check the text layer and poppler to check reading order.
 
 ### Which engine should I use?
 
@@ -145,20 +145,28 @@ Run it on your own PDF before you send it anywhere. `--show` prints what the par
 
 The template fixes the format. The content is still on you.
 
-1. **One page.** Ten years of work fit on one page if you keep only what matters for the role.
-2. **Impact first.** "Cut login failures by 40% by rebuilding auth with Redis caching" beats "Responsible for the authentication service".
-3. **Verb first.** Recruiters read the first two or three words of a bullet. Built, Led, Cut, Scaled.
-4. **No buzzwords.** Say what you did and what changed.
-5. **The top third decides.** Spend most of your editing time on the headline, summary and first job.
-6. **Tailor it.** Mirror the job description's words for the skills you really have.
-7. **Proofread.** A typo on a resume reads like a bug in production.
-8. **Full names, consistent dates.** Write the job title in full and give the company its legal form (Inc., LLC, GmbH). [Greenhouse lists](https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse) abbreviated titles and company names without one among the reasons a parse fails. Use one date format everywhere, such as "Mar 2023 – Present".
+1. **One page.** Even ten years of experience fits on one page if you keep only what matters for the role.
+2. **Impact first.** "Responsible for the authentication service" can become "Cut login failures by 40% by rebuilding auth with Redis caching".
+3. **Verb first.** The first 2-3 words of a bullet are what recruiters read first: Built, Led, Cut, Scaled.
+4. **No buzzwords.** Describe what you did and its impact instead.
+5. **Use the job post's words.** Mirror the job posting where it fits, but only for skills and experience you actually have.
+6. **The top third decides.** Spend most of your time polishing the first third of your resume: headline, summary, and your first or most relevant position.
+7. **Proofread.** A typo on your resume is like a bug in production.
+8. **One column, plain formatting.** Avoid two-column resumes and fancy formatting that confuse applicant tracking systems.
+9. **Full names, consistent dates.** Write job titles and company names in full, with the company's legal form (Inc., LLC, GmbH). [Greenhouse lists](https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse) abbreviated titles and company names among the causes of parsing problems. Use one date format everywhere, such as "Mar 2023 – Present".
 
 ## Want the Word and Google Docs version?
 
 <a href="https://www.patreon.com/techworld_with_milan/posts/premium-resume-174690977"><img src="images/premium-resume-package.png" width="420" alt="Premium Resume Package: updated resume, resume with summary, prompts to improve a resume, bonus LinkedIn and cover letter materials"></a>
 
-This repo is the free LaTeX and Typst template. The **[Premium Resume Package](https://www.patreon.com/techworld_with_milan/posts/premium-resume-174690977)** has the editable Word templates (they also open in Google Docs), versions with a summary and with projects, a matching cover letter, the AI prompts I use to tailor a resume to a job post, a video walkthrough, and short guides on writing the resume and preparing your LinkedIn profile.
+This repo is the free LaTeX and Typst template. The **[Premium Resume Package](https://www.patreon.com/techworld_with_milan/posts/premium-resume-174690977)** also includes:
+
+- Word versions of the resume templates (they also open in Google Docs)
+- Variations with and without a summary, and with a projects section
+- A matching cover letter template
+- The AI prompts I use when tailoring my resume to a job post
+- A video walkthrough
+- Short guides on writing your resume and preparing your LinkedIn profile
 
 ## Credits and license
 
