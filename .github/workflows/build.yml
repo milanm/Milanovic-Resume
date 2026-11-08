@@ -19,6 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Write edge-case sources (long names, US Letter, font sizes, overflow)
+        run: python3 scripts/edge_cases.py --write-only
+
       - name: Compile LaTeX (LuaLaTeX, tagged PDF)
         uses: xu-cheng/latex-action@v4
         with:
@@ -28,18 +35,25 @@ jobs:
             template.tex
             cover-letter.tex
             junior.tex
+            edge-letter.tex
+            edge-font10.tex
+            edge-font12.tex
+            edge-long.tex
+            edge-columns.tex
+            edge-overflow.tex
           latexmk_use_lualatex: true
 
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
-      - name: Install Typst, poppler and pdfminer.six
+      - name: Install Typst, poppler and the Python checkers
         run: |
-          curl -sSL "https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz" | tar -xJ
-          sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
+          url="https://github.com/typst/typst/releases/download/v${TYPST_VERSION}/typst-x86_64-unknown-linux-musl.tar.xz"
+          if curl -fsSL --retry 4 --retry-all-errors "$url" -o typst.tar.xz; then
+            tar -xJf typst.tar.xz && sudo mv typst-x86_64-unknown-linux-musl/typst /usr/local/bin/typst
+          else
+            echo "::warning::GitHub release download failed, building Typst ${TYPST_VERSION} from crates.io"
+            cargo install --locked --quiet typst-cli --version "${TYPST_VERSION}"
+          fi
           sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils zip
-          pip install --quiet pdfminer.six
+          pip install --quiet pdfminer.six pymupdf pyyaml pillow
           typst --version
 
       - name: Collect LaTeX PDFs
@@ -56,6 +70,18 @@ jobs:
       - name: ATS check (one page, clean text layer, reading order)
         run: make check
 
+      - name: Field check (every job's company, title and dates; degrees; skills)
+        run: make fields
+
+      - name: Edge cases (long names, US Letter, 10 and 12 pt, overflow)
+        run: make edge EDGE_FLAGS=--latex-prebuilt
+
+      - name: Accessibility (veraPDF, PDF/UA-2 and PDF/UA-1)
+        run: make verapdf
+
+      - name: Visual regression (page 1 against tests/visual)
+        run: make visual
+
       - name: Overleaf zip and previews
         run: make overleaf previews
 
@@ -66,6 +92,9 @@ jobs:
             pdf/*.pdf
             images/*.png
             build/Milanovic-Resume-overleaf.zip
+            build/edge/*.pdf
+            build/visual/*.png
+            build/verapdf-*.txt
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')

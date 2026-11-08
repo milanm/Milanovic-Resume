@@ -27,7 +27,8 @@ Having reviewed 1,000+ resumes as a hiring manager, I've seen most of them fail 
 | `latex/cover-letter.tex` | Cover letter in the same style |
 | `latex/junior.tex` | A junior engineer's resume (made-up person): no summary, projects up front |
 | `typst/*.typ` | The same four documents in Typst |
-| `scripts/check_pdf.py` | The ATS check that runs in CI |
+| `scripts/` | The checks CI runs on every commit (text layer, ATS fields, edge cases, page renders) and a one-off test against commercial resume parsers |
+| `tests/` | What the checks compare against: expected field values, reference renders, parser results |
 
 ## How it differs from most resume templates
 
@@ -36,7 +37,9 @@ Having reviewed 1,000+ resumes as a hiring manager, I've seen most of them fail 
 | Layout | One column, skills included (one line, separated by dots). CI checks with poppler that your headings and a line from each section come out in page order | Often two columns, read in an unpredictable order |
 | Length | CI fails the build on a second page, for both engines. The LaTeX class also warns in the log while you write (Typst has no such warning) | No limit |
 | Text layer | Tested on every commit with poppler and pdfminer.six, both engines: no ligature glyphs, real hyphens, `ć` and `ü` intact | Untested |
-| Accessibility | Tagged PDF from both engines | Untagged |
+| ATS fields | CI checks with three extractors that each job's company, title and dates come out together. Three commercial parsers tested once ([results](#commercial-parsers)) | Untested |
+| Accessibility | Tagged PDF with real headings: PDF/UA-2 from LaTeX, PDF/UA-1 from Typst, both validated with veraPDF on every commit | Untagged |
+| Edge cases | Long names and links, US Letter, 10 and 12 pt and a resume that overflows are built and checked on every commit, plus a pixel comparison of every page | Untested |
 | Font | Source Sans 3, open license, bundled. Same result on Windows, macOS, Linux and Overleaf | System or Mac-only fonts |
 | Engines | LaTeX (LuaLaTeX) and Typst, same design | LaTeX only |
 | Settings | Paper, accent colour, font size and ligatures are class options | Edit the style file |
@@ -49,7 +52,7 @@ I initially compiled the template with XeLaTeX, only to find that it converted e
 - **Typst** if you want compile times in milliseconds and a single small library file.
 - **LaTeX** if you live in Overleaf or already have a TeX setup.
 
-Both produce the same page, the same text for parsers, and a tagged PDF.
+Both produce the same page, the same text for parsers, and a tagged PDF that passes veraPDF.
 
 ## Quick start
 
@@ -74,15 +77,20 @@ Needs Typst 0.14 or newer. On [typst.app](https://typst.app), upload `lib.typ`, 
 
 ```bash
 cd typst
-typst compile --font-path ../fonts template.typ   # starter; resume.typ is the filled example
+typst compile --font-path ../fonts --pdf-standard ua-1 template.typ   # starter; resume.typ is the filled example
 ```
+
+`--pdf-standard ua-1` makes a tagged, accessible PDF/UA-1 file. Typst stops with an error if something breaks the standard, such as an image without alt text.
 
 A Typst Universe package (`typst init @preview/milanovic-resume`) is in review at [typst/packages#6333](https://github.com/typst/packages/pull/6333). Until it is merged, use the files above.
 
 ### Everything at once
 
 ```bash
-make            # builds all PDFs into pdf/ and runs the ATS check
+make            # builds all PDFs into pdf/, runs the text and field checks
+make edge       # long names, US Letter, 10 and 12 pt, overflow
+make verapdf    # PDF/UA validation (needs Docker)
+make visual     # page 1 of every PDF against tests/visual
 make previews   # renders images/*.png for this README
 ```
 
@@ -120,7 +128,9 @@ Typst takes the same settings as arguments: `paper: "us-letter"`, `accent: rgb("
 | `\inline{A \sep B}` | `#inline[A][B]` | Certifications, languages |
 | `letter` environment | `#letter(..)` | Cover letter body |
 
-## The ATS check
+## The checks
+
+### Text layer
 
 `scripts/check_pdf.py` reads the PDF the way a parser does, with poppler's `pdftotext`, and fails when:
 
@@ -135,11 +145,47 @@ python3 scripts/check_pdf.py pdf/resume-latex.pdf --expect "Your Name" SKILLS "P
 python3 scripts/check_pdf.py pdf/resume-latex.pdf --parser pdfminer --contains "you@example.com"   # needs: pip install pdfminer.six
 ```
 
-### Run it on your own resume
+### Fields
 
-`make check` and CI look for my name, my example email and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, or the build will fail. Strings in an `*_ORDER` variable must appear in that order. `MAX_PAGES` is 1; raise it if you decide your experience needs two pages (and set `onepage=false` in LaTeX to silence the warning).
+`scripts/check_fields.py` compares what poppler, pdfminer.six and PyMuPDF extract with `tests/fields/resume.yml` and `tests/fields/junior.yml`. It fails when the name, email, phone, location, a skill, a certification or a language is missing, and when a job's title, dates or location don't appear between that job's company and the next one. A parser can only attach a title to a company if the two come out together.
 
-Run it on your own PDF before you send it anywhere. `--show` prints what the parser sees. Two open-source parsers are not every ATS on the market, so treat a pass as a good sign, not a guarantee.
+### Commercial parsers
+
+Open-source extractors are not what an ATS runs. `scripts/ats_parsers.py` sends a PDF to three commercial resume parsers through [Eden AI](https://www.edenai.co) and counts the fields each one puts in the right slot: a job title under the right company, not just somewhere in the output. I ran it on November 8, 2026. The raw responses are in `tests/ats/`.
+
+| PDF | Affinda | Extracta | Klippa |
+|---|---|---|---|
+| `resume-latex.pdf` | 20/22 | 22/22 | 19/22 |
+| `resume-typst.pdf` | 20/22 | 22/22 | 19/22 |
+| `junior-latex.pdf` | 13/14 | 14/14 | 14/14 |
+| `junior-typst.pdf` | 13/14 | 14/14 | 14/14 |
+
+All three parsers got the name, email, phone, location and every job's company, title, start date and end date right. Every miss is a degree name. Affinda puts the level ("Master") in the degree field and cuts the name short ("M.Sc. in"). Klippa returns no degree names for my resume, while it reads the junior's, which uses the same layout. Both engines score the same, which points at the parsers rather than the layout.
+
+Each PDF costs about $0.27 in Eden AI credits, so this test doesn't run in CI:
+
+```bash
+export EDENAI_API_KEY=...   # your own key
+python3 scripts/ats_parsers.py pdf/resume-latex.pdf tests/fields/resume.yml --save tests/ats/resume-latex.json
+```
+
+### Edge cases
+
+`scripts/edge_cases.py` builds six variants of the example resume with both engines: US Letter, 10 pt, 12 pt, a long hyphenated name with a long LinkedIn URL, the two-column skills list, and the experience section three times over. Every variant must keep its text inside the margins and, in LaTeX, compile without an overfull line. The overflow variant has to fail the one-page check, and the LaTeX class has to warn about page 2.
+
+### Accessibility
+
+Both engines write a tagged PDF. Section headings are tagged as headings, so a screen reader can jump between them; lists are lists; the rules are marked as decoration. CI validates every PDF with [veraPDF](https://verapdf.org): PDF/UA-2 for LaTeX, PDF/UA-1 for Typst (Typst 0.14 doesn't write PDF/UA-2). veraPDF checks what a machine can check. Whether the reading order makes sense and the link text is meaningful still takes a person.
+
+### Visual regression
+
+`scripts/visual_diff.py` renders page 1 of every PDF and compares it with `tests/visual/`. The build fails when more than 0.5% of the pixels change, which catches a moved heading or broken spacing and lets a changed word through. After a deliberate design change, run `make baseline` and commit the new images.
+
+### Run the checks on your own resume
+
+`make check` and CI look for my name, my example email and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, put your facts in `tests/fields/resume.yml`, and refresh the reference renders with `make baseline` (or copy `build/visual/*.png` from the CI artifact into `tests/visual/`). Otherwise the build fails. Strings in an `*_ORDER` variable must appear in that order. `MAX_PAGES` is 1; raise it if you decide your experience needs two pages (and set `onepage=false` in LaTeX to silence the warning).
+
+Run the checks on your own PDF before you send it anywhere. `--show` prints what the parser sees. A few parsers are not every ATS on the market, so treat a pass as a good sign, not a guarantee.
 
 ## Writing rules that go with the template
 
@@ -172,9 +218,12 @@ This repo is the free LaTeX and Typst template. The **[Premium Resume Package](h
 
 - Code and examples: [MIT](LICENSE). The example content is my own resume; replace it with yours.
 - Font: [Source Sans 3](https://github.com/adobe-fonts/source-sans) by Adobe, [SIL Open Font License 1.1](fonts/OFL.md).
+- The commercial-parser test follows the idea of [RenderCV](https://github.com/rendercv/rendercv)'s ATS tests.
 - The repo layout follows the example of [Deedy Resume](https://github.com/deedy/Deedy-Resume), which showed how useful a well-made open resume template can be.
 
 ## Changelog
+
+**v1.3.0** (2026-11-08): section headings are tagged as headings in the LaTeX PDF, and the rules no longer show up as empty paragraphs; Typst builds tagged PDF/UA-1; CI validates both engines with veraPDF, checks every job's company, title and dates with three extractors, builds six edge cases with both engines and compares page 1 of every PDF with a reference render; results from three commercial resume parsers; CI builds Typst from crates.io when the GitHub download fails.
 
 **v1.2.0** (2026-11-07): junior engineer example; CONTRIBUTING and issue forms; LaTeX compiles with LuaLaTeX into a tagged PDF/UA-2 file; real hyphens and spaces in the text layer, so poppler, pdfminer.six and pypdf all read it the same; CI runs the pdfminer.six check on both engines; Overleaf links open with LuaLaTeX.
 

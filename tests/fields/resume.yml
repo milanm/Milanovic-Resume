@@ -1,0 +1,51 @@
+# What a parser should find in pdf/resume-*.pdf. Update this file when you edit latex/resume.tex
+# or typst/resume.typ, or `make fields` fails.
+name: Dr. Milan Milanović
+email: milan@example.com
+phone: +381 60 123 456
+location: Belgrade, Serbia
+work:
+  - company: 3MD Inc
+    title: Chief Technology Officer
+    location: Belgrade, Serbia
+    start: "2022"
+    end: Present
+  - company: Zühlke Group
+    title: Principal Consultant
+    location: Belgrade, Serbia
+    start: "2017"
+    end: "2022"
+  - company: EPS
+    title: Head of Engineering
+    location: Belgrade, Serbia
+    start: "2004"
+    end: "2017"
+education:
+  - degree: Ph.D. in Computer Science
+    school: University of Belgrade
+    year: "2010"
+  - degree: M.Sc. in Software Engineering
+    school: University of Belgrade
+    year: "2007"
+  - degree: B.Sc. (Hons.) in Computer Engineering Management
+    school: School of Business
+    year: "2004"
+skills:
+  - Technical strategy & roadmapping
+  - Microservices & modular monoliths
+  - Team scaling & people management
+  - .NET & C# architecture
+  - Domain-Driven Design (DDD)
+  - Recruiting, mentoring & coaching
+  - Azure & cloud-native design
+  - DevOps & CI/CD (Azure DevOps, Git)
+  - Agile & Scrum leadership
+  - Security & compliance
+certifications:
+  - Microsoft MVP
+  - Azure Developer
+  - Certified ScrumMaster (CSM)
+  - Professional Scrum Developer (PSD)
+languages:
+  - Serbian
+  - English

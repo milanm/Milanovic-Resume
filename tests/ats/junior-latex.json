@@ -1,0 +1,672 @@
+{
+  "affinda": {
+    "extracted_data": {
+      "personal_infos": {
+        "name": {
+          "first_name": "Ana",
+          "last_name": "Petrović",
+          "raw_name": "Ana Petrović",
+          "middle": null,
+          "title": null,
+          "prefix": null,
+          "sufix": null
+        },
+        "address": {
+          "formatted_location": "Novi Sad, Serbia",
+          "postal_code": null,
+          "region": "Vojvodina",
+          "country": "Serbia",
+          "country_code": "RS",
+          "raw_input_location": null,
+          "street": null,
+          "street_number": null,
+          "appartment_number": null,
+          "city": "Novi Sad"
+        },
+        "self_summary": null,
+        "objective": null,
+        "date_of_birth": null,
+        "place_of_birth": null,
+        "phones": [
+          "+38164 000 0000"
+        ],
+        "mails": [
+          "ana@example.com"
+        ],
+        "urls": [
+          "linkedin.com/in/ana-example"
+        ],
+        "fax": [],
+        "current_profession": null,
+        "gender": null,
+        "nationality": null,
+        "martial_status": null,
+        "current_salary": null,
+        "availability": null
+      },
+      "education": {
+        "total_years_education": null,
+        "entries": [
+          {
+            "title": "Bachelor",
+            "start_date": "2024-01-01",
+            "end_date": null,
+            "location": {
+              "formatted_location": null,
+              "postal_code": null,
+              "region": null,
+              "country": null,
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": null
+            },
+            "establishment": "University of Novi Sad",
+            "description": null,
+            "gpa": "(GPA 9.1/10)",
+            "accreditation": "B.Sc. in Software"
+          },
+          {
+            "title": "Course/Certificate",
+            "start_date": null,
+            "end_date": null,
+            "location": {
+              "formatted_location": null,
+              "postal_code": null,
+              "region": null,
+              "country": null,
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": null
+            },
+            "establishment": null,
+            "description": null,
+            "gpa": null,
+            "accreditation": "Microsoft Certified: Azure Fundamentals (AZ-900)"
+          }
+        ]
+      },
+      "work_experience": {
+        "total_years_experience": "2.6",
+        "entries": [
+          {
+            "title": "Engineer",
+            "start_date": null,
+            "end_date": null,
+            "company": null,
+            "location": {
+              "formatted_location": null,
+              "postal_code": null,
+              "region": null,
+              "country": null,
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": null
+            },
+            "description": "Builds and tests .NET APIs; shipped two production services in her first year",
+            "type": "Full time",
+            "industry": null
+          },
+          {
+            "title": "Junior Software Engineer",
+            "start_date": "2024-09-01",
+            "end_date": "2026-11-08",
+            "company": "Brightline Software d.o.o.",
+            "location": {
+              "formatted_location": "Novi Sad, Serbia",
+              "postal_code": null,
+              "region": "Vojvodina",
+              "country": "Serbia",
+              "country_code": "RS",
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": "Novi Sad"
+            },
+            "description": "• Built a shipment-tracking API in ASP.NET Core that serves 1,200 requests per minute at 120 ms p95.\n• Cut the test suite from 14 to 5 minutes by moving integration tests to Testcontainers.\n• Fixed 40+ production bugs from the support queue and wrote the runbook the on-call team now uses.\n• Shipped a second service, invoice export, from design review to production in six weeks.",
+            "type": "Full time",
+            "industry": null
+          },
+          {
+            "title": "Software Engineering Intern",
+            "start_date": "2024-02-01",
+            "end_date": "2024-07-01",
+            "company": "Datalab Systems d.o.o.",
+            "location": {
+              "formatted_location": "Novi Sad, Serbia",
+              "postal_code": null,
+              "region": "Vojvodina",
+              "country": "Serbia",
+              "country_code": "RS",
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": "Novi Sad"
+            },
+            "description": "• Added CSV and Excel export to an internal reporting tool used by 300 employees.\n• Wrote 120 unit tests, raising coverage of the billing module from 35% to 78%.",
+            "type": "Internship",
+            "industry": null
+          }
+        ]
+      },
+      "languages": [
+        {
+          "name": "Serbian (native)",
+          "code": "sr"
+        },
+        {
+          "name": "English (C1)",
+          "code": "en"
+        }
+      ],
+      "skills": [
+        {
+          "name": "Manufacturing Operations",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "RESTful API",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Entity Framework (EF) Core",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "REST API Development",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Unit Testing",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Containerization",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "C# (Programming Language)",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "ASP.NET Core",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "PostgreSQL",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": ".NET Framework",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Docker (Software)",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Github",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Azure Web Apps",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Git (Version Control System)",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Software Engineering",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Application Programming Interface (API)",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "ASP.NET",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Adobe Creative Suite",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Integration Testing",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Containerization",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Bug Tracking And Management",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Runbook",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Design Reviews",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Invoicing",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Software Engineering",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Export Administration Regulations",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Internal Reporting",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Csv Import",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "SQLite",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Finance",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Csv Import",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": ".NET Framework",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Software Engineering",
+          "type": "Specialized Skill"
+        },
+        {
+          "name": "Microsoft Certified Professional",
+          "type": "Certification"
+        },
+        {
+          "name": "Microsoft Azure",
+          "type": "Specialized Skill"
+        }
+      ],
+      "certifications": [],
+      "courses": [],
+      "publications": [],
+      "interests": []
+    },
+    "status": "success",
+    "usage": null,
+    "cost": 0.07,
+    "_edenai": {
+      "provider_time": 9598277504
+    }
+  },
+  "extracta": {
+    "extracted_data": {
+      "personal_infos": {
+        "name": {
+          "first_name": "Ana",
+          "last_name": "Petrović",
+          "raw_name": "Ana Petrović",
+          "middle": null,
+          "title": null,
+          "prefix": null,
+          "sufix": null
+        },
+        "address": {
+          "formatted_location": "Novi Sad, Serbia",
+          "postal_code": null,
+          "region": null,
+          "country": null,
+          "country_code": null,
+          "raw_input_location": null,
+          "street": null,
+          "street_number": null,
+          "appartment_number": null,
+          "city": null
+        },
+        "self_summary": "Junior Backend Engineer Builds and tests . NET APIs; shipped two production services in her first year",
+        "objective": null,
+        "date_of_birth": null,
+        "place_of_birth": null,
+        "phones": [
+          "+381 64 000 0000"
+        ],
+        "mails": [
+          "ana@example.com"
+        ],
+        "urls": [
+          "linkedin.com/in/ana-example",
+          "github.com/ana-example"
+        ],
+        "fax": [],
+        "current_profession": null,
+        "gender": null,
+        "nationality": null,
+        "martial_status": null,
+        "current_salary": null,
+        "availability": null
+      },
+      "education": {
+        "total_years_education": null,
+        "entries": [
+          {
+            "title": "B.Sc. in Software Engineering",
+            "start_date": "",
+            "end_date": "2024-01-01",
+            "location": {
+              "formatted_location": "",
+              "postal_code": null,
+              "region": null,
+              "country": null,
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": null
+            },
+            "establishment": "University of Novi Sad",
+            "description": "",
+            "gpa": "9.1/10",
+            "accreditation": ""
+          }
+        ]
+      },
+      "work_experience": {
+        "total_years_experience": null,
+        "entries": [
+          {
+            "title": "Junior Software Engineer",
+            "start_date": "2024-09-01",
+            "end_date": "",
+            "company": "Brightline Software d.o.o.",
+            "location": {
+              "formatted_location": "Novi Sad, Serbia",
+              "postal_code": null,
+              "region": null,
+              "country": null,
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": null
+            },
+            "description": "Built a shipment-tracking API in ASP.NET Core that serves 1,200 requests per minute at 120 ms p95. Cut the test suite from 14 to 5 minutes by moving integration tests to Testcontainers. Fixed 40+ production bugs from the support queue and wrote the runbook the on-call team now uses. Shipped a second service, invoice export, from design review to production in six weeks.",
+            "type": null,
+            "industry": ""
+          },
+          {
+            "title": "Software Engineering Intern",
+            "start_date": "2024-02-01",
+            "end_date": "2024-07-01",
+            "company": "Datalab Systems d.o.o.",
+            "location": {
+              "formatted_location": "Novi Sad, Serbia",
+              "postal_code": null,
+              "region": null,
+              "country": null,
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": null
+            },
+            "description": "Added CSV and Excel export to an internal reporting tool used by 300 employees. Wrote 120 unit tests, raising coverage of the billing module from 35% to 78%.",
+            "type": null,
+            "industry": ""
+          }
+        ]
+      },
+      "languages": [
+        {
+          "name": "Serbian",
+          "code": "native"
+        },
+        {
+          "name": "English",
+          "code": "C1"
+        }
+      ],
+      "skills": [
+        {
+          "name": "C#",
+          "type": "hard skill"
+        },
+        {
+          "name": ".NET 8",
+          "type": "hard skill"
+        },
+        {
+          "name": "ASP.NET Core",
+          "type": "hard skill"
+        },
+        {
+          "name": "PostgreSQL",
+          "type": "hard skill"
+        },
+        {
+          "name": "Entity Framework Core",
+          "type": "hard skill"
+        },
+        {
+          "name": "REST API design",
+          "type": "hard skill"
+        },
+        {
+          "name": "xUnit",
+          "type": "hard skill"
+        },
+        {
+          "name": "Testcontainers",
+          "type": "hard skill"
+        },
+        {
+          "name": "Docker",
+          "type": "hard skill"
+        },
+        {
+          "name": "GitHub Actions",
+          "type": "hard skill"
+        },
+        {
+          "name": "Azure App Service",
+          "type": "hard skill"
+        },
+        {
+          "name": "Git",
+          "type": "hard skill"
+        }
+      ],
+      "certifications": [
+        {
+          "name": "Microsoft Certified: Azure Fundamentals",
+          "type": "AZ-900"
+        }
+      ],
+      "courses": [],
+      "publications": [],
+      "interests": []
+    },
+    "status": "success",
+    "usage": null,
+    "cost": 0.1,
+    "_edenai": {
+      "provider_time": 11150329843
+    }
+  },
+  "klippa": {
+    "extracted_data": {
+      "personal_infos": {
+        "name": {
+          "first_name": null,
+          "last_name": null,
+          "raw_name": "Ana Petrović",
+          "middle": null,
+          "title": null,
+          "prefix": null,
+          "sufix": null
+        },
+        "address": {
+          "formatted_location": null,
+          "postal_code": null,
+          "region": null,
+          "country": "Serbia",
+          "country_code": null,
+          "raw_input_location": null,
+          "street": null,
+          "street_number": null,
+          "appartment_number": null,
+          "city": "Novi Sad"
+        },
+        "self_summary": null,
+        "objective": null,
+        "date_of_birth": null,
+        "place_of_birth": null,
+        "phones": [
+          "+381 64 000 0000"
+        ],
+        "mails": [
+          "ana@example.com"
+        ],
+        "urls": [
+          "linkedin.com/in/ana-example",
+          "github.com/ana-example"
+        ],
+        "fax": [],
+        "current_profession": null,
+        "gender": null,
+        "nationality": null,
+        "martial_status": null,
+        "current_salary": null,
+        "availability": null
+      },
+      "education": {
+        "total_years_education": null,
+        "entries": [
+          {
+            "title": "B.Sc. in Software Engineering",
+            "start_date": "2020-01-01T00:00:00",
+            "end_date": "2024-01-01T00:00:00",
+            "location": {
+              "formatted_location": null,
+              "postal_code": null,
+              "region": null,
+              "country": "Serbia",
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": "Novi Sad"
+            },
+            "establishment": "University of Novi Sad",
+            "description": "B.Sc. in Software Engineering",
+            "gpa": null,
+            "accreditation": null
+          }
+        ]
+      },
+      "work_experience": {
+        "total_years_experience": null,
+        "entries": [
+          {
+            "title": "Junior Software Engineer",
+            "start_date": "2024-09-01T00:00:00",
+            "end_date": null,
+            "company": "Brightline Software d.o.o.",
+            "location": {
+              "formatted_location": null,
+              "postal_code": null,
+              "region": null,
+              "country": "Serbia",
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": "Novi Sad"
+            },
+            "description": null,
+            "type": null,
+            "industry": null
+          },
+          {
+            "title": "Software Engineering Intern",
+            "start_date": "2024-02-01T00:00:00",
+            "end_date": "2024-07-01T00:00:00",
+            "company": "Datalab Systems d.o.o.",
+            "location": {
+              "formatted_location": null,
+              "postal_code": null,
+              "region": null,
+              "country": "Serbia",
+              "country_code": null,
+              "raw_input_location": null,
+              "street": null,
+              "street_number": null,
+              "appartment_number": null,
+              "city": "Novi Sad"
+            },
+            "description": null,
+            "type": null,
+            "industry": null
+          }
+        ]
+      },
+      "languages": [],
+      "skills": [],
+      "certifications": [],
+      "courses": [],
+      "publications": [],
+      "interests": [
+        {
+          "name": "Personal finance tracking",
+          "type": null
+        },
+        {
+          "name": "Open-source contributions",
+          "type": null
+        }
+      ]
+    },
+    "status": "success",
+    "usage": null,
+    "cost": 0.1,
+    "_edenai": {
+      "provider_time": 2821708088
+    }
+  },
+  "senseloaf": {
+    "error": {
+      "message": "Provider is currently unavailable"
+    },
+    "status": "fail",
+    "provider_status_code": null,
+    "cost": 0.0
+  }
+}

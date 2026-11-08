@@ -16,7 +16,7 @@
 %%   onepage   = true | false           (default: true, warns if the resume spills onto page 2)
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{milanovic-resume}[2026/11/07 v1.0 Milanovic Resume]
+\ProvidesClass{milanovic-resume}[2026/11/08 v1.3 Milanovic Resume]
 
 % ---------------------------------------------------------------- options
 \RequirePackage{kvoptions}
@@ -126,7 +126,15 @@
 % Separator for inline lists: Belgrade · email · phone
 \newcommand\sep{\unskip\hspace{0.45em}\textperiodcentered\hspace{0.45em}\ignorespaces}
 
-\newcommand\MR@rule[1]{\par\nointerlineskip\noindent{\color{rule}\rule{\linewidth}{#1}}\par\nointerlineskip}
+% ---------------------------------------------------------------- tagging
+% With \DocumentMetadata{... tagging=on} every paragraph becomes a P in the PDF
+% structure tree. \MR@paratag{H1} makes the next paragraph a heading instead, so a
+% screen reader can jump between sections. Without tagging (XeLaTeX) it does nothing.
+\newcommand\MR@paratag[1]{\@ifundefined{ver@tagpdf.sty}{}{\tagpdfsetup{para/tag=#1}}}
+
+% Full-width rule. Drawn in vertical mode, outside any paragraph, so the tagged PDF
+% marks it as decoration (an artifact) instead of an empty paragraph.
+\newcommand\MR@rule[1]{\par{\color{rule}\hrule height #1 depth 0pt}}
 
 \newcommand\makeheader{%
   \hypersetup{
@@ -138,7 +146,7 @@
   }%
   \pdfbookmark[1]{\MR@name}{header}%
   \begingroup\centering
-    {\Huge\bfseries\color{accent}\MR@name\par}%
+    {\Huge\bfseries\color{accent}\MR@paratag{Title}\MR@name\par}%
     \vspace{3pt}%
     {\small\MR@contact\par}%
   \endgroup
@@ -167,7 +175,7 @@
   \par\vspace{\MR@secskip}%
   \pdfbookmark[1]{#1}{sec:\thepage:\the\inputlineno}%
   \MR@rule{0.4pt}\vspace{2.5pt}%
-  {\centering\large\bfseries\color{accent}\MakeUppercase{#1}\par}%
+  {\centering\large\bfseries\color{accent}\MR@paratag{H1}\MakeUppercase{#1}\par}%
   \vspace{1.5pt}\MR@rule{0.8pt}%
   \nopagebreak\vspace{5pt}%
 }
