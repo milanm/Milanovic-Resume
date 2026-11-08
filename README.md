@@ -80,7 +80,7 @@ cd typst
 typst compile --font-path ../fonts --pdf-standard ua-1 template.typ   # starter; resume.typ is the filled example
 ```
 
-`--pdf-standard ua-1` makes a tagged, accessible PDF/UA-1 file. Typst stops with an error if something breaks the standard, such as an image without alt text.
+`--pdf-standard ua-1` produces a tagged, accessible PDF/UA-1. Typst bails out with an error if anything violates the spec, for example an image with no alt text.
 
 A Typst Universe package (`typst init @preview/milanovic-resume`) is in review at [typst/packages#6333](https://github.com/typst/packages/pull/6333). Until it is merged, use the files above.
 
@@ -147,11 +147,11 @@ python3 scripts/check_pdf.py pdf/resume-latex.pdf --parser pdfminer --contains "
 
 ### Fields
 
-`scripts/check_fields.py` compares what poppler, pdfminer.six and PyMuPDF extract with `tests/fields/resume.yml` and `tests/fields/junior.yml`. It fails when the name, email, phone, location, a skill, a certification or a language is missing, and when a job's title, dates or location don't appear between that job's company and the next one. A parser can only attach a title to a company if the two come out together.
+`scripts/check_fields.py` verifies the output of poppler, pdfminer.six and PyMuPDF against `tests/fields/resume.yml` and `tests/fields/junior.yml`. It fails if the name, email, phone number, location, a skill, a certification or a language is missing, or if a job's title, dates or location isn't found between the company of that job and the company of the following job. A title can be matched to a company only if they're extracted together.
 
 ### Commercial parsers
 
-Open-source extractors are not what an ATS runs. `scripts/ats_parsers.py` sends a PDF to three commercial resume parsers through [Eden AI](https://www.edenai.co) and counts the fields each one puts in the right slot: a job title under the right company, not just somewhere in the output. I ran it on November 8, 2026. The raw responses are in `tests/ats/`.
+These open-source extractors aren't what an ATS runs. `scripts/ats_parsers.py` queries three commercial resume parsers via [Eden AI](https://www.edenai.co) and checks whether each one gets the fields into the correct slots (does a job title get parsed under the right company, or does it end up somewhere else in the output?). I ran it on November 8, 2026. The raw responses are stored in `tests/ats/`.
 
 | PDF | Affinda | Extracta | Klippa |
 |---|---|---|---|
@@ -160,9 +160,9 @@ Open-source extractors are not what an ATS runs. `scripts/ats_parsers.py` sends 
 | `junior-latex.pdf` | 13/14 | 14/14 | 14/14 |
 | `junior-typst.pdf` | 13/14 | 14/14 | 14/14 |
 
-All three parsers got the name, email, phone, location and every job's company, title, start date and end date right. Every miss is a degree name. Affinda puts the level ("Master") in the degree field and cuts the name short ("M.Sc. in"). Klippa returns no degree names for my resume, while it reads the junior's, which uses the same layout. Both engines score the same, which points at the parsers rather than the layout.
+All three parsers correctly identified the name, email, phone number, location, and the company, title, start date and end date for every job. The only misses are in the degrees. Affinda places the degree level ("Master") in the degree field and truncates the degree name ("M.Sc. in"). Klippa doesn't return a degree name for my resume, but it does for the junior resume, which uses the exact same layout. Both engines get the same scores, which suggests the parsers are at fault, not the layout.
 
-Each PDF costs about $0.27 in Eden AI credits, so this test doesn't run in CI:
+Each PDF costs about $0.27 in Eden AI credits, so the test doesn't run in CI:
 
 ```bash
 export EDENAI_API_KEY=...   # your own key
@@ -171,21 +171,21 @@ python3 scripts/ats_parsers.py pdf/resume-latex.pdf tests/fields/resume.yml --sa
 
 ### Edge cases
 
-`scripts/edge_cases.py` builds six variants of the example resume with both engines: US Letter, 10 pt, 12 pt, a long hyphenated name with a long LinkedIn URL, the two-column skills list, and the experience section three times over. Every variant must keep its text inside the margins and, in LaTeX, compile without an overfull line. The overflow variant has to fail the one-page check, and the LaTeX class has to warn about page 2.
+`scripts/edge_cases.py` generates six variations of the example resume with both engines: US Letter, 10 pt, 12 pt, a long hyphenated name with a long LinkedIn URL, the skills section as a two-column list, and the experience section repeated three times. In all of them the text must stay within the margins, and in LaTeX the document must compile without an overfull line. For the overflow variant, the one-page check must fail and the LaTeX class must warn about page 2.
 
 ### Accessibility
 
-Both engines write a tagged PDF. Section headings are tagged as headings, so a screen reader can jump between them; lists are lists; the rules are marked as decoration. CI validates every PDF with [veraPDF](https://verapdf.org): PDF/UA-2 for LaTeX, PDF/UA-1 for Typst (Typst 0.14 doesn't write PDF/UA-2). veraPDF checks what a machine can check. Whether the reading order makes sense and the link text is meaningful still takes a person.
+Both engines produce a tagged PDF. Section headings are tagged as headings, so a screen reader can jump between them. Lists are tagged as lists, and the horizontal rules are marked as decoration. CI checks every PDF with [veraPDF](https://verapdf.org): PDF/UA-2 for the LaTeX PDFs and PDF/UA-1 for the Typst ones (Typst 0.14 doesn't support PDF/UA-2). veraPDF can verify only what a computer can verify. The reading order is a human check, and so is whether the link text means something.
 
 ### Visual regression
 
-`scripts/visual_diff.py` renders page 1 of every PDF and compares it with `tests/visual/`. The build fails when more than 0.5% of the pixels change, which catches a moved heading or broken spacing and lets a changed word through. After a deliberate design change, run `make baseline` and commit the new images.
+`scripts/visual_diff.py` renders page 1 of every PDF and compares it to the reference images in `tests/visual/`. If more than 0.5% of the pixels change, the build fails, since that usually means text has moved or the spacing has broken. Changing a word doesn't fail it. After a change to the design, run `make baseline` and commit the new reference images.
 
 ### Run the checks on your own resume
 
-`make check` and CI look for my name, my example email and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, put your facts in `tests/fields/resume.yml`, and refresh the reference renders with `make baseline` (or copy `build/visual/*.png` from the CI artifact into `tests/visual/`). Otherwise the build fails. Strings in an `*_ORDER` variable must appear in that order. `MAX_PAGES` is 1; raise it if you decide your experience needs two pages (and set `onepage=false` in LaTeX to silence the warning).
+`make check` and CI search for my name, my example email address and the sample letter's greeting. When you put in your own details, update `RESUME_ORDER`, `RESUME_HAS`, `TEMPLATE_ORDER` and `LETTER_ORDER` at the top of the `Makefile`, and put your information in `tests/fields/resume.yml`. Run `make baseline` to update the reference renders, or copy the `build/visual/*.png` files from the CI build artifact to `tests/visual/`; otherwise the build fails. The items in an `*_ORDER` variable must appear in the listed order. `MAX_PAGES` is set to 1. If your experience needs two pages, increase `MAX_PAGES` (and set `onepage=false` in LaTeX to silence the page-2 warning).
 
-Run the checks on your own PDF before you send it anywhere. `--show` prints what the parser sees. A few parsers are not every ATS on the market, so treat a pass as a good sign, not a guarantee.
+Always run the checks on your own PDF before you send it. `--show` prints what the parser sees. A few parsers don't cover every ATS on the market, so take a passing check as a good sign, not a guarantee.
 
 ## Writing rules that go with the template
 
@@ -223,7 +223,7 @@ This repo is the free LaTeX and Typst template. The **[Premium Resume Package](h
 
 ## Changelog
 
-**v1.3.0** (2026-11-08): section headings are tagged as headings in the LaTeX PDF, and the rules no longer show up as empty paragraphs; Typst builds tagged PDF/UA-1; CI validates both engines with veraPDF, checks every job's company, title and dates with three extractors, builds six edge cases with both engines and compares page 1 of every PDF with a reference render; results from three commercial resume parsers; CI builds Typst from crates.io when the GitHub download fails.
+**v1.3.0** (2026-11-08): section headings are tagged as headings in the LaTeX PDF, and the horizontal rules no longer show up as empty paragraphs; Typst now outputs tagged PDF/UA-1; CI validates both engines with veraPDF, checks the company, title and dates of every job with three extractors, generates six edge cases with both engines, and compares page 1 of every PDF with a reference render; results from three commercial resume parsers; CI builds Typst from crates.io when the download from GitHub fails.
 
 **v1.2.0** (2026-11-07): junior engineer example; CONTRIBUTING and issue forms; LaTeX compiles with LuaLaTeX into a tagged PDF/UA-2 file; real hyphens and spaces in the text layer, so poppler, pdfminer.six and pypdf all read it the same; CI runs the pdfminer.six check on both engines; Overleaf links open with LuaLaTeX.
 
