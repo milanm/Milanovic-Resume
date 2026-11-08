@@ -1,0 +1,33 @@
+# What a parser should find in pdf/junior-*.pdf (made-up person).
+name: Ana Petrović
+email: ana@example.com
+phone: +381 64 000 0000
+location: Novi Sad, Serbia
+work:
+  - company: Brightline Software d.o.o.
+    title: Junior Software Engineer
+    location: Novi Sad, Serbia
+    start: Sep 2024
+    end: Present
+  - company: Datalab Systems d.o.o.
+    title: Software Engineering Intern
+    location: Novi Sad, Serbia
+    start: Feb 2024
+    end: Jul 2024
+education:
+  - degree: B.Sc. in Software Engineering
+    school: University of Novi Sad
+    year: "2024"
+skills:
+  - C#, .NET 8, ASP.NET Core
+  - PostgreSQL, Entity Framework Core
+  - REST API design
+  - xUnit, Testcontainers
+  - Docker, GitHub Actions
+  - Azure App Service
+  - Git
+certifications:
+  - "Microsoft Certified: Azure Fundamentals (AZ-900)"
+languages:
+  - Serbian
+  - English
