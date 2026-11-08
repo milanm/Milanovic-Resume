@@ -6,7 +6,7 @@
 
 A one-page, single-column resume template for software engineers, in **LaTeX and Typst**.
 
-Having reviewed 1,000+ resumes as a hiring manager, I've seen most of them fail on things a template can fix: a second page nobody reads, a two-column layout that confuses the applicant tracking system (ATS), a PDF where a search for "cloud-native" finds nothing. This template follows those rules, and CI checks that it keeps following them.
+I have reviewed 1,000+ resumes as a hiring manager, and I've seen many fail for similar reasons. They usually have too many pages or complex two-column layouts that confuse the applicant tracking system (ATS), or a PDF where a search for "cloud-native" finds nothing. This template follows those rules, and CI checks that it keeps following them.
 
 ![Resume preview](images/resume.png)
 
