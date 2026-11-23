@@ -82,7 +82,7 @@ typst compile --font-path ../fonts --pdf-standard ua-1 template.typ   # starter;
 
 `--pdf-standard ua-1` produces a tagged, accessible PDF/UA-1. Typst bails out with an error if anything violates the spec, for example an image with no alt text.
 
-A Typst Universe package (`typst init @preview/milanovic-resume`) is in review at [typst/packages#6333](https://github.com/typst/packages/pull/6333). Until it is merged, use the files above.
+The package is also on [Typst Universe](https://typst.app/universe/package/milanovic-resume): `typst init @preview/milanovic-resume:1.0.0` creates a project from the starter template, or choose **Start from template** on typst.app and search for `milanovic-resume`. Packages can't ship fonts, so add Source Sans 3 from `fonts/` yourself.
 
 ### Everything at once
 

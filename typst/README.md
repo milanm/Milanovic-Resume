@@ -1,7 +1,5 @@
 # milanovic-resume
 
-> **Pending publication.** This package is in review at [typst/packages#6333](https://github.com/typst/packages/pull/6333), so `typst init @preview/milanovic-resume` won't work until it is merged. Until then, use the files in this folder: `typst compile --font-path ../fonts template.typ`.
-
 A one-page, single-column resume for software engineers. Everything sits in one column, skills included, so there is no second column for an applicant tracking system (ATS) to interleave with your job history. Ligatures are off by default, so words like "efficient" stay plain text for keyword search. Your name, keywords and title go into the PDF metadata.
 
 The same design exists as a LaTeX class at [github.com/milanm/Milanovic-Resume](https://github.com/milanm/Milanovic-Resume), with a matching cover letter and a CI check for page count and text extraction.
